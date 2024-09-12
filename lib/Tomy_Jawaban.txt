@@ -1,0 +1,1 @@
+Susahnya dari modul Git dan Github adalah harus mengerti command-command git baru. 
