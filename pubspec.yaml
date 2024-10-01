@@ -1,5 +1,5 @@
-name: atma_cinema_mobile
-description: "A new Flutter project."
+name: atma_cinema
+description: "An app for easy movie ticket booking with real-time seat selection and secure payment."
 publish_to: 'none'
 version: 0.1.0
 
