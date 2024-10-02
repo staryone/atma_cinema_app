@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/components/input_component.dart';
 import 'package:atma_cinema/views/dashboard_view.dart';
+import 'package:atma_cinema/views/register_view.dart';
 
 class LoginView extends StatefulWidget {
   final Map? data;
@@ -38,7 +39,6 @@ class _LoginViewState extends State<LoginView> {
                 },
                 controller: usernameController,
                 hintTxt: "Username",
-                helperTxt: "Inputkan User yang telah didaftar",
                 iconData: Icons.person,
               ),
               inputForm(
@@ -51,7 +51,6 @@ class _LoginViewState extends State<LoginView> {
                 password: true,
                 controller: passwordController,
                 hintTxt: "Password",
-                helperTxt: "Inputkan Password",
                 iconData: Icons.password,
               ),
               Row(
@@ -113,9 +112,9 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void pushRegister(BuildContext context) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (_) => const RegisterView()),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const RegisterView()),
+    );
   }
 }
