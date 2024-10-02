@@ -11,7 +11,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index){
+  void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -33,9 +33,21 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home,), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.list,), label: 'List'),
-          BottomNavigationBarItem(icon: Icon(Icons.person,), label: 'Profile'),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+              ),
+              label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.list,
+              ),
+              label: 'List'),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person,
+              ),
+              label: 'Profile'),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
