@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/utils/constants.dart';
 
+//Label Text
+Padding displayText({required String text}) {
+  return Padding(
+    padding: const EdgeInsets.only(left: 30, top: 20),
+    child: SizedBox(
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,  // Customize font size as needed
+          fontWeight: FontWeight.normal,
+        ),
+      ),
+    ),
+  );
+}
+
+//Input text
 Padding inputForm(Function(String?) validasi,
     {required TextEditingController controller,
     required String hintTxt,
-    required String helperTxt,
-    required IconData iconData,
+    IconData? iconData,
     bool password = false}) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 20),
