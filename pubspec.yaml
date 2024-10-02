@@ -10,7 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_native_splash: ^2.4.1
+  flutter_svg: ^2.0.10+1
   google_fonts: ^6.2.1
+  material_symbols_icons: ^4.2785.1
 
 dev_dependencies:
   flutter_lints: ^4.0.0
@@ -19,3 +22,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - images/
+    - images/ac_logo.png
