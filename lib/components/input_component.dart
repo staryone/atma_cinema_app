@@ -4,7 +4,7 @@ import 'package:atma_cinema/utils/constants.dart';
 //Label Text
 Padding displayText({required String text}) {
   return Padding(
-    padding: const EdgeInsets.only(left: 30, top: 20),
+    padding: const EdgeInsets.only(top: 20),
     child: SizedBox(
       child: Text(
         text,
