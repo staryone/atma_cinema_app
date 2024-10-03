@@ -22,6 +22,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    Map? dataForm = widget.data;
     return Container(
       // height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
@@ -120,43 +121,45 @@ class _LoginFormState extends State<LoginForm> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const DashboardView(),
-                            ),
-                          );
-                          // if (dataForm != null) {
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (_) => const DashboardView(),
-                          //     ),
-                          //   );
-                          // } else {
-                          //   showDialog(
-                          //     context: context,
-                          //     builder: (_) => AlertDialog(
-                          //       title: const Text('Password Salah!'),
-                          //       content: TextButton(
-                          //         onPressed: () => pushRegister(context),
-                          //         child: const Text('Daftar Disini !!'),
-                          //       ),
-                          //       actions: <Widget>[
-                          //         TextButton(
-                          //           onPressed: () =>
-                          //               Navigator.pop(context, 'Cancel'),
-                          //           child: const Text('Cancel'),
-                          //         ),
-                          //         TextButton(
-                          //           onPressed: () =>
-                          //               Navigator.pop(context, 'OK'),
-                          //           child: const Text('OK'),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   );
-                          // }
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (_) => const DashboardView(),
+                          //   ),
+                          // );
+                          if (dataForm != null &&
+                              dataForm['email'] == emailController.text &&
+                              dataForm['password'] == passwordController.text) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const DashboardView(),
+                              ),
+                            );
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                title: const Text('Password Salah!'),
+                                content: TextButton(
+                                  onPressed: () => pushRegister(context),
+                                  child: const Text('Daftar Disini !!'),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, 'Cancel'),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, 'OK'),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -174,9 +177,9 @@ class _LoginFormState extends State<LoginForm> {
                     SizedBox(height: 75),
                     TextButton(
                       onPressed: () {
-                        Map<String, dynamic> formData = {};
-                        formData['email'] = emailController.text;
-                        formData['password'] = passwordController.text;
+                        // Map<String, dynamic> formData = {};
+                        // formData['email'] = emailController.text;
+                        // formData['password'] = passwordController.text;
                         pushRegister(context);
                       },
                       style: TextButton.styleFrom(
