@@ -123,37 +123,43 @@ class _LoginFormState extends State<LoginForm> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          if (dataForm != null &&
-                              dataForm['username'] == emailController.text &&
-                              dataForm['password'] == passwordController.text) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const HomeView()));
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                title: const Text('Password Salah!'),
-                                content: TextButton(
-                                  onPressed: () => pushRegister(context),
-                                  child: const Text('Daftar Disini !!'),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'Cancel'),
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'OK'),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const DashboardView(),
+                            ),
+                          );
+                          // if (dataForm != null) {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (_) => const DashboardView(),
+                          //     ),
+                          //   );
+                          // } else {
+                          //   showDialog(
+                          //     context: context,
+                          //     builder: (_) => AlertDialog(
+                          //       title: const Text('Password Salah!'),
+                          //       content: TextButton(
+                          //         onPressed: () => pushRegister(context),
+                          //         child: const Text('Daftar Disini !!'),
+                          //       ),
+                          //       actions: <Widget>[
+                          //         TextButton(
+                          //           onPressed: () =>
+                          //               Navigator.pop(context, 'Cancel'),
+                          //           child: const Text('Cancel'),
+                          //         ),
+                          //         TextButton(
+                          //           onPressed: () =>
+                          //               Navigator.pop(context, 'OK'),
+                          //           child: const Text('OK'),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   );
+                          // }
                         }
                       },
                       style: ElevatedButton.styleFrom(
