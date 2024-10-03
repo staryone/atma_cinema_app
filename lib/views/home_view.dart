@@ -19,7 +19,6 @@ class _HomeViewState extends State<HomeView> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           actions: [
-            // Navigate to the Search Screen
             IconButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(

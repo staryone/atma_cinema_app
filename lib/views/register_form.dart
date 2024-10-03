@@ -142,6 +142,16 @@ class _RegisterFormState extends State<RegisterForm> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
+                        if (!isAgree) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'You must agree to the terms and conditions'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
                         if (_formKey.currentState!.validate()) {
                           Map<String, dynamic> formData = {};
 
