@@ -181,18 +181,16 @@ class _FnbViewState extends State<FnbView> {
           ),
 
           Card(
-            elevation: 4.0, // Optional: To give the card some shadow effect
+            elevation: 4.0,
             margin: EdgeInsets.all(16.0),
             child: Padding(
-              padding: EdgeInsets.all(16.0), // Padding inside the card
+              padding: EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  // Text information on the left
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Title
                         Text(
                           'Popcorn',
                           style: TextStyle(
@@ -202,8 +200,7 @@ class _FnbViewState extends State<FnbView> {
                           ),
                         ),
                         SizedBox(height: 8.0),
-                        
-                        // Description
+
                         Text(
                           'Krenyes krenyes enak mantul',
                           style: TextStyle(
@@ -213,7 +210,6 @@ class _FnbViewState extends State<FnbView> {
                         ),
                         SizedBox(height: 8.0),
                         
-                        // Price
                         Text(
                           'Rp. 25.000',
                           style: TextStyle(
@@ -267,7 +263,6 @@ class _FnbViewState extends State<FnbView> {
                         ),
                         SizedBox(height: 8.0),
                         
-                        // Price
                         Text(
                           'Rp. 40.000',
                           style: TextStyle(
