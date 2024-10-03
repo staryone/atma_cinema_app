@@ -1,4 +1,3 @@
-import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/login_view.dart';
 import 'package:atma_cinema/views/profile_view.dart';
 import 'package:flutter/material.dart';
