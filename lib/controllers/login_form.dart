@@ -44,9 +44,7 @@ class _LoginFormState extends State<LoginForm> {
         children: [
           SizedBox(height: 18),
           ElevatedButton.icon(
-            onPressed: () {
-              
-            },
+            onPressed: () {},
             icon: SvgPicture.asset('images/googleIcon.svg'),
             label: Text("Login with Google"),
             style: ElevatedButton.styleFrom(
@@ -135,7 +133,7 @@ class _LoginFormState extends State<LoginForm> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const DashboardView(),
+                                builder: (_) => DashboardView(data: dataForm),
                               ),
                             );
                           } else {
