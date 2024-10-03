@@ -1,4 +1,6 @@
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/views/fnb_view.dart';
+import 'package:atma_cinema/views/myticket_view.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/views/home_view.dart';
 // import 'package:guidedlayout2_2140/View/view_list.dart';
@@ -22,14 +24,8 @@ class _DashboardViewState extends State<DashboardView> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeView(),
-    Center(
-      child: Text('Index 2: My Ticket'),
-    ),
-    Center(
-      child: Text(
-        'Index 3: FnB',
-      ),
-    ),
+    MyticketView(),
+    FnbView(),
   ];
   @override
   Widget build(BuildContext context) {
