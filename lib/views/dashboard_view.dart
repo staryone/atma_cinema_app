@@ -4,7 +4,8 @@ import 'package:atma_cinema/views/home_view.dart';
 // import 'package:guidedlayout2_2140/View/view_list.dart';
 
 class DashboardView extends StatefulWidget {
-  const DashboardView({super.key});
+  final Map? data;
+  const DashboardView({super.key, this.data});
 
   @override
   State<DashboardView> createState() => _DashboardViewState();
@@ -36,7 +37,6 @@ class _DashboardViewState extends State<DashboardView> {
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
         child: BottomNavigationBar(
-          backgroundColor: Colors.transparent,
           selectedItemColor: colorPrimary,
           items: [
             BottomNavigationBarItem(

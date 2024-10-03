@@ -117,20 +117,25 @@ class _RegisterFormState extends State<RegisterForm> {
                   iconData: Icons.calendar_month,
                   labelTxt: "Date of Birth",
                 ),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: isAgree,
-                      onChanged: (value) {
-                        setState(() {
-                          isAgree = value!;
-                        });
-                      },
-                    ),
-                    Expanded(
-                      child: Text("Yes, I agree to the terms and conditions."),
-                    ),
-                  ],
+                StatefulBuilder(
+                  builder: (context, setState) {
+                    return Row(
+                      children: [
+                        Checkbox(
+                          value: isAgree,
+                          onChanged: (value) {
+                            setState(() {
+                              isAgree = value!;
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child:
+                              Text("Yes, I agree to the terms and conditions."),
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,8 +144,12 @@ class _RegisterFormState extends State<RegisterForm> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           Map<String, dynamic> formData = {};
+
+                          formData['fullname'] = fullnameController.text;
                           formData['email'] = emailController.text;
                           formData['password'] = passwordController.text;
+                          formData['notelp'] = notelpController.text;
+                          formData['tglLahir'] = notelpController.text;
                           pushLogin(context, formData);
                         }
                       },
