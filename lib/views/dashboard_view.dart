@@ -6,8 +6,8 @@ import 'package:atma_cinema/views/home_view.dart';
 // import 'package:guidedlayout2_2140/View/view_list.dart';
 
 class DashboardView extends StatefulWidget {
-  final Map? data;
-  const DashboardView({super.key, this.data});
+  final Map data;
+  const DashboardView({super.key, required this.data});
 
   @override
   State<DashboardView> createState() => _DashboardViewState();
@@ -22,13 +22,13 @@ class _DashboardViewState extends State<DashboardView> {
     });
   }
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomeView(),
-    MyticketView(),
-    FnbView(),
-  ];
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _widgetOptions = <Widget>[
+      HomeView(data: widget.data),
+      MyticketView(),
+      FnbView(),
+    ];
     return Scaffold(
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),

@@ -159,7 +159,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           formData['email'] = emailController.text;
                           formData['password'] = passwordController.text;
                           formData['notelp'] = notelpController.text;
-                          formData['tglLahir'] = notelpController.text;
+                          formData['tglLahir'] = tanggalController.text;
                           pushLogin(context, formData);
                         }
                       },

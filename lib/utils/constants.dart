@@ -34,3 +34,10 @@ TextStyle styleBold = GoogleFonts.roboto(
     fontWeight: FontWeight.bold,
   ),
 );
+TextStyle styleBold2 = GoogleFonts.roboto(
+  textStyle: const TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: colorPrimary,
+  ),
+);
