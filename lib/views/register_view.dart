@@ -1,4 +1,4 @@
-import 'package:atma_cinema/views/register_form.dart';
+import 'package:atma_cinema/controllers/register_form.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/utils/constants.dart';
 

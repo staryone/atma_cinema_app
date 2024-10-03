@@ -1,7 +1,7 @@
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/components/appbar_component.dart';
-import 'package:atma_cinema/views/login_form.dart';
+import 'package:atma_cinema/controllers/login_form.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginView extends StatefulWidget {
