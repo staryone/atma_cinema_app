@@ -53,10 +53,10 @@ class _RegisterFormState extends State<RegisterForm> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                inputForm(
-                  (p0) {
+                InputForm(
+                  validasi: (p0) {
                     if (p0 == null || p0.isEmpty) {
-                      return "Full name tidak boleh kosong";
+                      return 'empty';
                     }
                     return null;
                   },
@@ -64,10 +64,10 @@ class _RegisterFormState extends State<RegisterForm> {
                   hintTxt: "full name",
                   labelTxt: "Full Name",
                 ),
-                inputForm(
-                  (p0) {
+                InputForm(
+                  validasi: (p0) {
                     if (p0 == null || p0.isEmpty) {
-                      return "Email tidak boleh kosong";
+                      return "empty";
                     }
                     if (!p0.contains('@') && !p0.contains('.')) {
                       return "Masukkan email yang valid";
@@ -78,8 +78,8 @@ class _RegisterFormState extends State<RegisterForm> {
                   hintTxt: "example@gmail.com",
                   labelTxt: "Email",
                 ),
-                inputForm(
-                  (p0) {
+                InputForm(
+                  validasi: (p0) {
                     if (p0 == null || p0.isEmpty) {
                       return "Password tidak boleh kosong";
                     }
@@ -94,8 +94,8 @@ class _RegisterFormState extends State<RegisterForm> {
                   password: true,
                   labelTxt: "Password",
                 ),
-                inputForm(
-                  (p0) {
+                InputForm(
+                  validasi: (p0) {
                     if (p0 == null || p0.isEmpty) {
                       return "Nomor Telepon tidak boleh kosong";
                     }
@@ -104,9 +104,10 @@ class _RegisterFormState extends State<RegisterForm> {
                   controller: notelpController,
                   hintTxt: "+628xxxxxxxxx",
                   labelTxt: "Phone Number",
+                  txtInputType: TextInputType.phone,
                 ),
-                inputForm(
-                  (p0) {
+                InputForm(
+                  validasi: (p0) {
                     if (p0 == null || p0.isEmpty) {
                       return "Tanggal lahir tidak boleh kosong";
                     }
@@ -116,10 +117,13 @@ class _RegisterFormState extends State<RegisterForm> {
                   hintTxt: "DD/MM/YYYY",
                   iconData: Icons.calendar_month,
                   labelTxt: "Date of Birth",
+                  isDate: true,
                 ),
                 StatefulBuilder(
                   builder: (context, setState) {
                     return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Checkbox(
                           value: isAgree,
@@ -142,17 +146,37 @@ class _RegisterFormState extends State<RegisterForm> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        if (!isAgree) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  'You must agree to the terms and conditions'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          return;
-                        }
-                        if (_formKey.currentState!.validate()) {
+                        if (!_formKey.currentState!.validate()) {
+                          if (fullnameController.text.isEmpty) {
+                            showCustomError(
+                                context, "Full name tidak boleh kosong");
+                          } else if (emailController.text.isEmpty) {
+                            showCustomError(
+                                context, "Email tidak boleh kosong");
+                          } else if (!emailController.text.contains('@') ||
+                              !emailController.text.contains('.')) {
+                            showCustomError(
+                                context, "Masukkan email yang valid");
+                          } else if (passwordController.text.isEmpty) {
+                            showCustomError(
+                                context, "Password tidak boleh kosong");
+                          } else if (passwordController.text.length < 5) {
+                            showCustomError(
+                                context, "Password minimal 5 digit");
+                          } else if (notelpController.text.isEmpty) {
+                            showCustomError(
+                                context, "Nomor telepon tidak boleh kosong");
+                          } else if (tanggalController.text.isEmpty) {
+                            showCustomError(
+                                context, "Tanggal lahir tidak boleh kosong");
+                          }
+                        } else {
+                          if (!isAgree) {
+                            showCustomError(context,
+                                'You must agree to the terms and conditions');
+                            return;
+                          }
+
                           Map<String, dynamic> formData = {};
 
                           formData['fullname'] = fullnameController.text;
@@ -211,6 +235,15 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void showCustomError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
       ),
     );
   }

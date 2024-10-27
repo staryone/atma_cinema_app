@@ -14,52 +14,113 @@ Padding displayText({required String text}) {
   );
 }
 
-//Input text
-Padding inputForm(Function(String?) validasi,
-    {required TextEditingController controller,
-    required String hintTxt,
-    required String labelTxt,
-    IconData? iconData,
-    TextInputType? txtInputType,
-    bool password = false}) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 29),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        displayText(text: labelTxt),
-        SizedBox(
-          width: 350,
-          height: 48.9,
-          child: TextFormField(
-            validator: (value) => validasi(value),
-            autofocus: false,
-            controller: controller,
-            obscureText: password,
-            keyboardType: txtInputType,
-            decoration: InputDecoration(
-              hintText: hintTxt,
-              hintStyle: styleNormal,
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-                borderSide: BorderSide(
-                  color: colorBorder,
-                  width: 1.0,
+class InputForm extends StatefulWidget {
+  final Function(String?) validasi;
+  final TextEditingController controller;
+  final String hintTxt;
+  final String labelTxt;
+  final IconData? iconData;
+  final TextInputType? txtInputType;
+  final bool password;
+  final bool isDate;
+
+  const InputForm({
+    Key? key,
+    required this.validasi,
+    required this.controller,
+    required this.hintTxt,
+    required this.labelTxt,
+    this.iconData,
+    this.txtInputType,
+    this.password = false,
+    this.isDate = false,
+  }) : super(key: key);
+
+  @override
+  createState() => _InputFormState();
+}
+
+class _InputFormState extends State<InputForm> {
+  bool isPasswordVisible = false;
+
+  void togglePasswordVisibility() {
+    setState(() {
+      isPasswordVisible = !isPasswordVisible;
+    });
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        widget.controller.text =
+            "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 29),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          displayText(text: widget.labelTxt),
+          SizedBox(
+            width: 350,
+            height: 48.9,
+            child: TextFormField(
+              validator: (value) => widget.validasi(value),
+              autofocus: false,
+              controller: widget.controller,
+              obscureText: widget.password && !isPasswordVisible,
+              keyboardType:
+                  widget.isDate ? TextInputType.none : widget.txtInputType,
+              readOnly: widget.isDate,
+              onTap: widget.isDate ? () => _selectDate(context) : null,
+              decoration: InputDecoration(
+                hintText: widget.hintTxt,
+                hintStyle: TextStyle(
+                  color: colorPrimary.withOpacity(0.2),
+                  fontSize: 16,
                 ),
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(7),
+                  borderSide: BorderSide(
+                    color: colorBorder,
+                    width: 1.0,
+                  ),
+                ),
+                errorStyle: TextStyle(
+                  height: 0,
+                  fontSize: 0,
+                ),
+                suffixIcon: widget.password
+                    ? IconButton(
+                        icon: Icon(
+                          isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: togglePasswordVisibility,
+                      )
+                    : (widget.iconData != null ? Icon(widget.iconData) : null),
               ),
-              errorStyle: TextStyle(
-                height: 0,
-                fontSize: 0,
-              ),
-              suffixIcon: Icon(iconData),
             ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }

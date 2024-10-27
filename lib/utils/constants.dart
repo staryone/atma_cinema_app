@@ -5,7 +5,7 @@ import 'package:material_symbols_icons/get.dart';
 const Color colorPrimary = Color(0xFF001F3F);
 const Color colorBorder = Color(0xFFD9D9D9);
 
-final home_symbol = SymbolsGet.get('home', SymbolStyle.rounded);
+final homeSymbol = SymbolsGet.get('home_rounded', SymbolStyle.rounded);
 
 TextStyle styleNormal = GoogleFonts.roboto(
   textStyle: const TextStyle(
@@ -37,6 +37,13 @@ TextStyle styleBold = GoogleFonts.roboto(
 TextStyle styleBold2 = GoogleFonts.roboto(
   textStyle: const TextStyle(
     fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: colorPrimary,
+  ),
+);
+TextStyle styleHeader = GoogleFonts.roboto(
+  textStyle: const TextStyle(
+    fontSize: 28,
     fontWeight: FontWeight.bold,
     color: colorPrimary,
   ),

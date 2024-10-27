@@ -26,13 +26,15 @@ class _DashboardViewState extends State<DashboardView> {
   Widget build(BuildContext context) {
     final List<Widget> _widgetOptions = <Widget>[
       HomeView(data: widget.data),
-      MyticketView(),
+      MyTicketView(),
       FnbView(),
     ];
+
     return Scaffold(
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
         child: BottomNavigationBar(
+          backgroundColor: Colors.white,
           selectedItemColor: colorPrimary,
           items: [
             BottomNavigationBarItem(

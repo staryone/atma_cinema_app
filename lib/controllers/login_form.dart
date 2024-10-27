@@ -22,7 +22,13 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    Map? dataForm = widget.data;
+    // Map? dataForm = widget.data;
+    Map? dataForm = {};
+    dataForm['fullname'] = "Joko";
+    dataForm['email'] = "joko@gmail.com";
+    dataForm['password'] = "joko123";
+    dataForm['notelp'] = "085161182172";
+    dataForm['tglLahir'] = "12/10/1998";
     return Container(
       // height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
@@ -44,7 +50,14 @@ class _LoginFormState extends State<LoginForm> {
         children: [
           SizedBox(height: 18),
           ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => DashboardView(data: dataForm),
+                ),
+              );
+            },
             icon: SvgPicture.asset('images/googleIcon.svg'),
             label: Text("Login with Google"),
             style: ElevatedButton.styleFrom(
@@ -85,8 +98,8 @@ class _LoginFormState extends State<LoginForm> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                inputForm(
-                  (p0) {
+                InputForm(
+                  validasi: (p0) {
                     if (p0 == null || p0.isEmpty) {
                       return "Email tidak boleh kosong";
                     }
@@ -99,8 +112,8 @@ class _LoginFormState extends State<LoginForm> {
                   hintTxt: "example@gmail.com",
                   labelTxt: "Email",
                 ),
-                inputForm(
-                  (p0) {
+                InputForm(
+                  validasi: (p0) {
                     if (p0 == null || p0.isEmpty) {
                       return "Password tidak boleh kosong";
                     }
@@ -120,13 +133,22 @@ class _LoginFormState extends State<LoginForm> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (_) => const DashboardView(),
-                          //   ),
-                          // );
+                        if (!_formKey.currentState!.validate()) {
+                          if (emailController.text.isEmpty) {
+                            showCustomError(
+                                context, "Email tidak boleh kosong");
+                          } else if (!emailController.text.contains('@') ||
+                              !emailController.text.contains('.')) {
+                            showCustomError(
+                                context, "Masukkan email yang valid");
+                          } else if (passwordController.text.isEmpty) {
+                            showCustomError(
+                                context, "Password tidak boleh kosong");
+                          } else if (passwordController.text.length < 5) {
+                            showCustomError(
+                                context, "Password minimal 5 digit");
+                          }
+                        } else {
                           if (dataForm != null &&
                               dataForm['email'] == emailController.text &&
                               dataForm['password'] == passwordController.text) {
@@ -137,28 +159,8 @@ class _LoginFormState extends State<LoginForm> {
                               ),
                             );
                           } else {
-                            showDialog(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                title: const Text('Password Salah!'),
-                                content: TextButton(
-                                  onPressed: () => pushRegister(context),
-                                  child: const Text('Daftar Disini !!'),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'Cancel'),
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'OK'),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
-                            );
+                            showCustomError(
+                                context, "Username atau password salah!");
                           }
                         }
                       },
@@ -213,6 +215,15 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void showCustomError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
       ),
     );
   }
