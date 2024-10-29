@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:atma_cinema/components/input_component.dart';
 import 'package:atma_cinema/views/dashboard_view.dart';
-import 'package:atma_cinema/views/register_view.dart';
+import 'package:atma_cinema/views/auth/register_view.dart';
 
 class LoginForm extends StatefulWidget {
   final Map? data;

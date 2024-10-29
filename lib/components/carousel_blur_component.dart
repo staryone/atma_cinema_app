@@ -39,10 +39,11 @@ class _CarouselBlurWithIndicatorState extends State<CarouselBlurWithIndicator> {
           itemCount: widget.images.length,
           itemBuilder: (context, index, realIndex) {
             bool isBlur = index != currentIndex;
-
+            print(index);
+            print(currentIndex);
             return Stack(
               children: [
-                if (!isBlur)
+                if (isBlur)
                   BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                     child: Opacity(

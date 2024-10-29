@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:atma_cinema/components/input_component.dart';
-import 'package:atma_cinema/views/login_view.dart';
+import 'package:atma_cinema/views/auth/login_view.dart';
 
 class RegisterForm extends StatefulWidget {
   final Map? data;
