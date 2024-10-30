@@ -17,17 +17,27 @@ class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
   bool isAgree = false;
 
+  TextEditingController _fullnameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _notelpController = TextEditingController();
+  TextEditingController _tanggalController = TextEditingController();
+
+  @override
+  void dispose() {
+    _fullnameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _notelpController.dispose();
+    _tanggalController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController fullnameController = TextEditingController();
-    TextEditingController emailController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-    TextEditingController notelpController = TextEditingController();
-    TextEditingController tanggalController = TextEditingController();
-
     return Container(
       alignment: Alignment.center,
-      // height: MediaQuery.of(context).size.height,
+      height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -60,7 +70,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     }
                     return null;
                   },
-                  controller: fullnameController,
+                  controller: _fullnameController,
                   hintTxt: "full name",
                   labelTxt: "Full Name",
                 ),
@@ -74,7 +84,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     }
                     return null;
                   },
-                  controller: emailController,
+                  controller: _emailController,
                   hintTxt: "example@gmail.com",
                   labelTxt: "Email",
                 ),
@@ -88,7 +98,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     }
                     return null;
                   },
-                  controller: passwordController,
+                  controller: _passwordController,
                   hintTxt: "**********",
                   iconData: Icons.visibility_off,
                   password: true,
@@ -101,7 +111,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     }
                     return null;
                   },
-                  controller: notelpController,
+                  controller: _notelpController,
                   hintTxt: "+628xxxxxxxxx",
                   labelTxt: "Phone Number",
                   txtInputType: TextInputType.phone,
@@ -113,7 +123,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     }
                     return null;
                   },
-                  controller: tanggalController,
+                  controller: _tanggalController,
                   hintTxt: "DD/MM/YYYY",
                   iconData: Icons.calendar_month,
                   labelTxt: "Date of Birth",
@@ -147,26 +157,26 @@ class _RegisterFormState extends State<RegisterForm> {
                     ElevatedButton(
                       onPressed: () {
                         if (!_formKey.currentState!.validate()) {
-                          if (fullnameController.text.isEmpty) {
+                          if (_fullnameController.text.isEmpty) {
                             showCustomError(
                                 context, "Full name tidak boleh kosong");
-                          } else if (emailController.text.isEmpty) {
+                          } else if (_emailController.text.isEmpty) {
                             showCustomError(
                                 context, "Email tidak boleh kosong");
-                          } else if (!emailController.text.contains('@') ||
-                              !emailController.text.contains('.')) {
+                          } else if (!_emailController.text.contains('@') ||
+                              !_emailController.text.contains('.')) {
                             showCustomError(
                                 context, "Masukkan email yang valid");
-                          } else if (passwordController.text.isEmpty) {
+                          } else if (_passwordController.text.isEmpty) {
                             showCustomError(
                                 context, "Password tidak boleh kosong");
-                          } else if (passwordController.text.length < 5) {
+                          } else if (_passwordController.text.length < 5) {
                             showCustomError(
                                 context, "Password minimal 5 digit");
-                          } else if (notelpController.text.isEmpty) {
+                          } else if (_notelpController.text.isEmpty) {
                             showCustomError(
                                 context, "Nomor telepon tidak boleh kosong");
-                          } else if (tanggalController.text.isEmpty) {
+                          } else if (_tanggalController.text.isEmpty) {
                             showCustomError(
                                 context, "Tanggal lahir tidak boleh kosong");
                           }
@@ -179,11 +189,11 @@ class _RegisterFormState extends State<RegisterForm> {
 
                           Map<String, dynamic> formData = {};
 
-                          formData['fullname'] = fullnameController.text;
-                          formData['email'] = emailController.text;
-                          formData['password'] = passwordController.text;
-                          formData['notelp'] = notelpController.text;
-                          formData['tglLahir'] = tanggalController.text;
+                          formData['fullname'] = _fullnameController.text;
+                          formData['email'] = _emailController.text;
+                          formData['password'] = _passwordController.text;
+                          formData['notelp'] = _notelpController.text;
+                          formData['tglLahir'] = _tanggalController.text;
                           pushLogin(context, formData);
                         }
                       },

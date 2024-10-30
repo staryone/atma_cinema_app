@@ -4,6 +4,7 @@ import 'package:atma_cinema/components/input_component.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/auth/login_view.dart';
 import 'package:atma_cinema/views/profile/profile_view.dart';
+import 'package:atma_cinema/views/search/search_view.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
@@ -32,14 +33,73 @@ class _HomeViewState extends State<HomeView> {
                     color: colorPrimary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(24),
                   ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search...',
-                      hintStyle: TextStyle(
-                          color: colorPrimary.withOpacity(0.3), height: 1.45),
-                      prefixIcon: Icon(Icons.search, color: Colors.grey),
-                      suffixIcon: Icon(Icons.mic),
-                      border: InputBorder.none,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  SearchView(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                          transitionDuration: Duration(milliseconds: 300),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24.0),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.search, color: Colors.grey),
+                          SizedBox(width: 8.0),
+                          Expanded(
+                            child: Text(
+                              'Search...',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: colorPrimary.withOpacity(0.3),
+                                height: 1.45,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      SearchView(isClickVoice: true),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
+                                  transitionDuration:
+                                      Duration(milliseconds: 300),
+                                ),
+                              );
+                            },
+                            child: Icon(
+                              Icons.mic,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

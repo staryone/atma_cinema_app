@@ -17,8 +17,15 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +37,7 @@ class _LoginFormState extends State<LoginForm> {
     dataForm['notelp'] = "085161182172";
     dataForm['tglLahir'] = "12/10/1998";
     return Container(
-      // height: MediaQuery.of(context).size.height,
+      height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -108,7 +115,7 @@ class _LoginFormState extends State<LoginForm> {
                     }
                     return null;
                   },
-                  controller: emailController,
+                  controller: _emailController,
                   hintTxt: "example@gmail.com",
                   labelTxt: "Email",
                 ),
@@ -122,7 +129,7 @@ class _LoginFormState extends State<LoginForm> {
                     }
                     return null;
                   },
-                  controller: passwordController,
+                  controller: _passwordController,
                   hintTxt: "**********",
                   iconData: Icons.visibility_off,
                   password: true,
@@ -134,24 +141,24 @@ class _LoginFormState extends State<LoginForm> {
                     ElevatedButton(
                       onPressed: () {
                         if (!_formKey.currentState!.validate()) {
-                          if (emailController.text.isEmpty) {
+                          if (_emailController.text.isEmpty) {
                             showCustomError(
                                 context, "Email tidak boleh kosong");
-                          } else if (!emailController.text.contains('@') ||
-                              !emailController.text.contains('.')) {
+                          } else if (!_emailController.text.contains('@') ||
+                              !_emailController.text.contains('.')) {
                             showCustomError(
                                 context, "Masukkan email yang valid");
-                          } else if (passwordController.text.isEmpty) {
+                          } else if (_passwordController.text.isEmpty) {
                             showCustomError(
                                 context, "Password tidak boleh kosong");
-                          } else if (passwordController.text.length < 5) {
+                          } else if (_passwordController.text.length < 5) {
                             showCustomError(
                                 context, "Password minimal 5 digit");
                           }
                         } else {
                           if (dataForm != null &&
-                              dataForm['email'] == emailController.text &&
-                              dataForm['password'] == passwordController.text) {
+                              dataForm['email'] == _emailController.text &&
+                              dataForm['password'] == _passwordController.text) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -180,8 +187,8 @@ class _LoginFormState extends State<LoginForm> {
                     TextButton(
                       onPressed: () {
                         // Map<String, dynamic> formData = {};
-                        // formData['email'] = emailController.text;
-                        // formData['password'] = passwordController.text;
+                        // formData['email'] = _emailController.text;
+                        // formData['password'] = _passwordController.text;
                         pushRegister(context);
                       },
                       style: TextButton.styleFrom(

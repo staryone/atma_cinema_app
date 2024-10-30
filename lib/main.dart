@@ -1,10 +1,19 @@
+import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/views/auth/login_view.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: colorPrimary,
+      statusBarIconBrightness: Brightness.light,
+    ),
+  );
+
   runApp(const MainApp());
 }
 
@@ -14,6 +23,14 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        primaryColor: colorPrimary,
+        appBarTheme: const AppBarTheme(
+          color: colorPrimary,
+          elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+        ),
+      ),
       home: SplashScreen(),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:intl/intl.dart';
 
 //Label Text
 Padding displayText({required String text}) {
@@ -50,9 +51,19 @@ class _InputFormState extends State<InputForm> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    DateTime initialDate;
+    final dateFormat = DateFormat("dd/MM/YYYY");
+
+    try {
+      final formatDate = dateFormat.parse(widget.controller.text);
+      initialDate = formatDate;
+    } catch (e) {
+      initialDate = DateTime.now();
+    }
+
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initialDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
@@ -102,6 +113,11 @@ class _InputFormState extends State<InputForm> {
                     width: 1.0,
                   ),
                 ),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                  color: colorPrimary,
+                  width: 2.0,
+                )),
                 errorStyle: TextStyle(
                   height: 0,
                   fontSize: 0,

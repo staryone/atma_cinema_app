@@ -83,7 +83,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
             expansionFactor: 2,
             dotHeight: 8,
             dotWidth: 8,
-            activeDotColor: Colors.grey.shade700,
+            activeDotColor: Color(0xfff264968),
             dotColor: Colors.grey.shade400,
           ),
         ),

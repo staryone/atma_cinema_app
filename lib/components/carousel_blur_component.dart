@@ -38,8 +38,8 @@ class _CarouselBlurWithIndicatorState extends State<CarouselBlurWithIndicator> {
         CarouselSlider.builder(
           itemCount: widget.images.length,
           itemBuilder: (context, index, realIndex) {
-            bool isBlur = index != currentIndex;
-            print(index);
+            bool isBlur = index == currentIndex;
+            // print(index);
             print(currentIndex);
             return Stack(
               children: [
@@ -96,7 +96,7 @@ class _CarouselBlurWithIndicatorState extends State<CarouselBlurWithIndicator> {
             expansionFactor: 2,
             dotHeight: 8,
             dotWidth: 8,
-            activeDotColor: Colors.grey.shade700,
+            activeDotColor: Color(0xfff264968),
             dotColor: Colors.grey.shade400,
           ),
         ),

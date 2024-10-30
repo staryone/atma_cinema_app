@@ -1,4 +1,6 @@
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/views/myticket/active_order_view.dart';
+import 'package:atma_cinema/views/myticket/history_order_view.dart';
 import 'package:flutter/material.dart';
 
 class MyTicketView extends StatefulWidget {
@@ -7,29 +9,71 @@ class MyTicketView extends StatefulWidget {
 }
 
 class _MyTicketViewState extends State<MyTicketView> {
-  bool isActiveOrdersSelected = true;
+  int _selectedIndex = 0;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _selectedIndex);
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    _pageController.jumpToPage(index);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _widgetOptions = <Widget>[
+      ActiveOrderView(),
+      HistoryOrderView(),
+    ];
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        toolbarHeight: 100,
+        toolbarHeight: 90,
         title: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 45.0),
+          padding: const EdgeInsets.only(top: 45, bottom: 20),
           child: Text(
             'My Ticket',
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-              fontFamily: "Roboto",
-            ),
+            style: styleHeade2,
           ),
         ),
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
+        actions: [
+          if (_selectedIndex == 1)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: GestureDetector(
+                onTap: () {},
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  decoration: BoxDecoration(
+                    color: colorPrimary,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "Show: This Month",
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -42,9 +86,7 @@ class _MyTicketViewState extends State<MyTicketView> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isActiveOrdersSelected = true;
-                      });
+                      _onItemTapped(0);
                     },
                     child: Column(
                       children: [
@@ -52,12 +94,12 @@ class _MyTicketViewState extends State<MyTicketView> {
                           'Active orders',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: isActiveOrdersSelected
+                            color: _selectedIndex == 0
                                 ? Colors.black
                                 : Colors.grey,
                           ),
                         ),
-                        if (isActiveOrdersSelected)
+                        if (_selectedIndex == 0)
                           Container(
                             height: 2,
                             width: 150,
@@ -71,9 +113,7 @@ class _MyTicketViewState extends State<MyTicketView> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isActiveOrdersSelected = false;
-                      });
+                      _onItemTapped(1);
                     },
                     child: Column(
                       children: [
@@ -81,12 +121,12 @@ class _MyTicketViewState extends State<MyTicketView> {
                           'History orders',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: !isActiveOrdersSelected
+                            color: _selectedIndex == 1
                                 ? Colors.black
                                 : Colors.grey,
                           ),
                         ),
-                        if (!isActiveOrdersSelected)
+                        if (_selectedIndex == 1)
                           Container(
                             height: 2,
                             width: 150,
@@ -99,42 +139,15 @@ class _MyTicketViewState extends State<MyTicketView> {
               ],
             ),
             SizedBox(height: 40),
-            Icon(
-              Icons.movie,
-              size: 80,
-              color: Color(0xFF0A1D37),
-            ),
-            SizedBox(height: 20),
-            Text(
-              "Let's watch a movie!",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Get exciting movie tickets, on the Atma Cinema',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(128, 28),
-                backgroundColor: Color(0xFF0A1D37),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: Text(
-                'See a movie',
-                style: TextStyle(fontSize: 14, color: Colors.white),
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+                children: _widgetOptions,
               ),
             ),
           ],
