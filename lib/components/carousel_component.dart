@@ -12,6 +12,7 @@ class CarouselWithIndicator extends StatefulWidget {
   final double ratioCarousel;
   final bool enableInfiniteScrollCarousel;
   final double viewportFractionCarousel;
+  final GestureTapCallback? onTap;
 
   CarouselWithIndicator({
     super.key,
@@ -22,6 +23,7 @@ class CarouselWithIndicator extends StatefulWidget {
     this.ratioCarousel = 3 / 4,
     this.enableInfiniteScrollCarousel = false,
     this.viewportFractionCarousel = 0.55,
+    this.onTap,
   });
 
   @override
@@ -38,15 +40,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
         CarouselSlider(
           items: widget.images.map((imageUrl) {
             return GestureDetector(
-              onTap: () {
-                // Navigasi ke halaman DetailPage dan kirim data gambar
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MyTicketView(),
-                  ),
-                );
-              },
+              onTap: widget.onTap,
               child: Container(
                 margin: const EdgeInsets.all(6.0),
                 decoration: BoxDecoration(

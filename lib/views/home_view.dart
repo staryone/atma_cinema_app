@@ -3,6 +3,7 @@ import 'package:atma_cinema/components/carousel_component.dart';
 import 'package:atma_cinema/components/input_component.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/auth/login_view.dart';
+import 'package:atma_cinema/views/detail_promo_view.dart';
 import 'package:atma_cinema/views/profile/profile_view.dart';
 import 'package:atma_cinema/views/search/search_view.dart';
 import 'package:flutter/material.dart';
@@ -177,6 +178,14 @@ class _HomeViewState extends State<HomeView> {
               ratioCarousel: 16 / 9,
               enableInfiniteScrollCarousel: true,
               viewportFractionCarousel: 0.8,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailPromoView(),
+                  ),
+                );
+              },
             ),
             SizedBox(
               height: 20,
