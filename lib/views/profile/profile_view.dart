@@ -1,5 +1,11 @@
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/views/auth/login_view.dart';
+import 'package:atma_cinema/views/profile/about_view.dart';
+import 'package:atma_cinema/views/profile/change_password_view.dart';
 import 'package:atma_cinema/views/profile/editprofile_view.dart';
+import 'package:atma_cinema/views/profile/help_center_view.dart';
+import 'package:atma_cinema/views/profile/privacy_view.dart';
+import 'package:atma_cinema/views/profile/terms_view.dart';
 import 'package:flutter/material.dart';
 
 class ProfileView extends StatefulWidget {
@@ -68,27 +74,62 @@ class _ProfileViewState extends State<ProfileView> {
                       MenuItem(
                         icon: Icons.help_outline,
                         text: "Help Center",
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HelpCenterView(),
+                            ),
+                          );
+                        },
                       ),
                       MenuItem(
                         icon: Icons.info_outline,
                         text: "About Us",
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AboutView(),
+                            ),
+                          );
+                        },
                       ),
                       MenuItem(
                         icon: Icons.description_outlined,
-                        text: "Term and Conditions",
-                        onTap: () {},
+                        text: "Terms and Conditions",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TermsView(),
+                            ),
+                          );
+                        },
                       ),
                       MenuItem(
                         icon: Icons.privacy_tip_outlined,
                         text: "Privacy Policy",
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PrivacyView(),
+                            ),
+                          );
+                        },
                       ),
                       MenuItem(
                         icon: Icons.lock_outline,
                         text: "Change Password",
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChangePasswordView(),
+                            ),
+                          );
+                        },
                       ),
                       ListTile(
                         leading: const Icon(Icons.logout, color: Colors.red),
@@ -96,7 +137,14 @@ class _ProfileViewState extends State<ProfileView> {
                           "Logout",
                           style: TextStyle(color: Colors.red),
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginView(),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 20),
                       const Text(
