@@ -33,6 +33,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  barcode:
+    dependency: transitive
+    description:
+      name: barcode
+      sha256: ab180ce22c6555d77d45f0178a523669db67f95856e3378259ef2ffeb43e6003
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.8"
+  bidi:
+    dependency: transitive
+    description:
+      name: bidi
+      sha256: "9a712c7ddf708f7c41b1923aa83648a3ed44cfd75b04f72d598c45e5be287f9d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.12"
   boolean_selector:
     dependency: transitive
     description:
@@ -185,6 +201,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.3+3"
+  fixnum:
+    dependency: transitive
+    description:
+      name: fixnum
+      sha256: b6dc7065e46c974bc7c5f143080a6764ec7a4be6da1285ececdc37be96de53be
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -488,6 +512,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  pdf:
+    dependency: "direct main"
+    description:
+      name: pdf
+      sha256: "05df53f8791587402493ac97b9869d3824eccbc77d97855f4545cf72df3cae07"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.11.1"
+  pdf_widget_wrapper:
+    dependency: transitive
+    description:
+      name: pdf_widget_wrapper
+      sha256: c930860d987213a3d58c7ec3b7ecf8085c3897f773e8dc23da9cae60a5d6d0f5
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   pedantic:
     dependency: transitive
     description:
@@ -528,6 +568,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  printing:
+    dependency: "direct main"
+    description:
+      name: printing
+      sha256: b535d177fc6e8f8908e19b0ff5c1d4a87e3c4d0bf675e05aa2562af1b7853906
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.13.4"
+  qr:
+    dependency: transitive
+    description:
+      name: qr
+      sha256: "5a1d2586170e172b8a8c8470bbbffd5eb0cd38a66c0d77155ea138d3af3a4445"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
+  qr_flutter:
+    dependency: "direct main"
+    description:
+      name: qr_flutter
+      sha256: "5095f0fc6e3f71d08adef8feccc8cea4f12eec18a2e31c2e8d82cb6019f4b097"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -565,6 +629,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  sprintf:
+    dependency: transitive
+    description:
+      name: sprintf
+      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
   stack_trace:
     dependency: transitive
     description:
@@ -629,6 +701,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.2"
+  uuid:
+    dependency: "direct main"
+    description:
+      name: uuid
+      sha256: a5be9ef6618a7ac1e964353ef476418026db906c4facdedaa299b7a2e71690ff
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.5.1"
   vector_graphics:
     dependency: transitive
     description:
