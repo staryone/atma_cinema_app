@@ -24,6 +24,8 @@ class InputForm extends StatefulWidget {
   final TextInputType? txtInputType;
   final bool password;
   final bool isDate;
+  final VoidCallback? onToggleVisibility;
+  final Color? borderColor;
 
   const InputForm({
     Key? key,
@@ -35,6 +37,8 @@ class InputForm extends StatefulWidget {
     this.txtInputType,
     this.password = false,
     this.isDate = false,
+    this.onToggleVisibility,
+    this.borderColor,
   }) : super(key: key);
 
   @override
@@ -109,16 +113,32 @@ class _InputFormState extends State<InputForm> {
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(7),
                   borderSide: BorderSide(
-                    color: colorBorder,
+                    color: widget.borderColor ?? colorBorder,
                     width: 1.0,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                  color: colorPrimary,
-                  width: 2.0,
-                )),
-                errorStyle: TextStyle(
+                  borderRadius: BorderRadius.circular(7),
+                  borderSide: BorderSide(
+                    color: widget.borderColor ?? colorPrimary,
+                    width: 2.0,
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(7),
+                  borderSide: BorderSide(
+                    color: Colors.red,
+                    width: 1.0,
+                  ),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(7),
+                  borderSide: BorderSide(
+                    color: Colors.red,
+                    width: 2.0,
+                  ),
+                ),
+                errorStyle: const TextStyle(
                   height: 0,
                   fontSize: 0,
                 ),
@@ -129,7 +149,12 @@ class _InputFormState extends State<InputForm> {
                               ? Icons.visibility
                               : Icons.visibility_off,
                         ),
-                        onPressed: togglePasswordVisibility,
+                        onPressed: () {
+                          togglePasswordVisibility();
+                          if (widget.onToggleVisibility != null) {
+                            widget.onToggleVisibility!();
+                          }
+                        },
                       )
                     : (widget.iconData != null ? Icon(widget.iconData) : null),
               ),
