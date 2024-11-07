@@ -179,10 +179,14 @@ class _HomeViewState extends State<HomeView> {
               enableInfiniteScrollCarousel: true,
               viewportFractionCarousel: 0.8,
               onTap: () {
+                //tambahan untuk deatil promosi
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => DetailPromoView(),
+                    builder: (context) => DetailPromoView(
+                      promoImageUrl:
+                          "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg",
+                    ),
                   ),
                 );
               },
