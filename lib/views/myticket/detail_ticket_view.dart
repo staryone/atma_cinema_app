@@ -17,7 +17,7 @@ class TicketDetailPage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
                 image: DecorationImage(
-                  image: AssetImage('assets/excavator.jpg'),
+                  image: AssetImage('assets/images/FnB_Food1.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),

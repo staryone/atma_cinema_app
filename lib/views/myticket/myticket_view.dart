@@ -1,5 +1,6 @@
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/myticket/active_order_view.dart';
+import 'package:atma_cinema/views/myticket/detail_ticket_view.dart';
 import 'package:atma_cinema/views/myticket/history_order_view.dart';
 import 'package:flutter/material.dart';
 
@@ -58,7 +59,9 @@ class _MyTicketViewState extends State<MyTicketView> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  
+                },
                 child: Container(
                   padding:
                       EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

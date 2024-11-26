@@ -1,4 +1,5 @@
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/views/myticket/detail_ticket_view.dart';
 import 'package:flutter/material.dart';
 
 class ActiveOrderView extends StatefulWidget {
@@ -101,7 +102,12 @@ class OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TicketDetailPage()),
+        );
+      },
       child: Card(
         color: Color.fromARGB(255, 252, 252, 252),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
