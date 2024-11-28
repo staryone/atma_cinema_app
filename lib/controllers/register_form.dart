@@ -3,6 +3,7 @@ import 'package:atma_cinema/utils/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:atma_cinema/components/input_component.dart';
 import 'package:atma_cinema/views/auth/login_view.dart';
+import 'package:atma_cinema/services/auth_service.dart';
 
 class RegisterForm extends StatefulWidget {
   final Map? data;
@@ -17,21 +18,74 @@ class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
   bool isAgree = false;
 
-  TextEditingController _fullnameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _passwordConfirmController = TextEditingController();
-  TextEditingController _notelpController = TextEditingController();
-  TextEditingController _tanggalController = TextEditingController();
+  final TextEditingController _fullnameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordConfirmController =
+      TextEditingController();
+  final TextEditingController _notelpController = TextEditingController();
+  final TextEditingController _tanggalController = TextEditingController();
 
   @override
   void dispose() {
     _fullnameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _passwordConfirmController.dispose();
     _notelpController.dispose();
     _tanggalController.dispose();
     super.dispose();
+  }
+
+  Future<void> _register() async {
+    if (_formKey.currentState!.validate()) {
+      if (!isAgree) {
+        showCustomError(context, "You must agree to the terms and conditions");
+        return;
+      }
+
+      final Map<String, dynamic> formData = {
+        'fullName': _fullnameController.text,
+        'email': _emailController.text,
+        'password': _passwordController.text,
+        'password_confirmation': _passwordConfirmController.text,
+        'dateOfBirth': _tanggalController.text,
+        'phoneNumber': _notelpController.text,
+      };
+
+      try {
+        await AuthService().register(formData);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Registration successful")),
+        );
+        Navigator.pop(context); // Navigate back or to login screen
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
+      }
+    } else {
+      if (_fullnameController.text.isEmpty) {
+        showCustomError(context, "Full name tidak boleh kosong");
+      } else if (_emailController.text.isEmpty) {
+        showCustomError(context, "Email tidak boleh kosong");
+      } else if (!_emailController.text.contains('@') ||
+          !_emailController.text.contains('.')) {
+        showCustomError(context, "Masukkan email yang valid");
+      } else if (_passwordController.text.isEmpty) {
+        showCustomError(context, "Password tidak boleh kosong");
+      } else if (_passwordController.text.length < 5) {
+        showCustomError(context, "Password minimal 5 digit");
+      } else if (!_passwordConfirmController.text
+          .contains(_passwordController.text)) {
+        showCustomError(
+            context, "Reenter password tidak sesuai dengan password");
+      } else if (_notelpController.text.isEmpty) {
+        showCustomError(context, "Nomor telepon tidak boleh kosong");
+      } else if (_tanggalController.text.isEmpty) {
+        showCustomError(context, "Tanggal lahir tidak boleh kosong");
+      }
+    }
   }
 
   @override
@@ -176,52 +230,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          if (!_formKey.currentState!.validate()) {
-                            if (_fullnameController.text.isEmpty) {
-                              showCustomError(
-                                  context, "Full name tidak boleh kosong");
-                            } else if (_emailController.text.isEmpty) {
-                              showCustomError(
-                                  context, "Email tidak boleh kosong");
-                            } else if (!_emailController.text.contains('@') ||
-                                !_emailController.text.contains('.')) {
-                              showCustomError(
-                                  context, "Masukkan email yang valid");
-                            } else if (_passwordController.text.isEmpty) {
-                              showCustomError(
-                                  context, "Password tidak boleh kosong");
-                            } else if (_passwordController.text.length < 5) {
-                              showCustomError(
-                                  context, "Password minimal 5 digit");
-                            } else if (!_passwordConfirmController.text
-                                .contains(_passwordController.text)) {
-                              showCustomError(context,
-                                  "Reenter password tidak sesuai dengan password");
-                            } else if (_notelpController.text.isEmpty) {
-                              showCustomError(
-                                  context, "Nomor telepon tidak boleh kosong");
-                            } else if (_tanggalController.text.isEmpty) {
-                              showCustomError(
-                                  context, "Tanggal lahir tidak boleh kosong");
-                            }
-                          } else {
-                            if (!isAgree) {
-                              showCustomError(context,
-                                  'You must agree to the terms and conditions');
-                              return;
-                            }
-
-                            Map<String, dynamic> formData = {};
-
-                            formData['fullname'] = _fullnameController.text;
-                            formData['email'] = _emailController.text;
-                            formData['password'] = _passwordController.text;
-                            formData['notelp'] = _notelpController.text;
-                            formData['tglLahir'] = _tanggalController.text;
-                            pushLogin(context, formData);
-                          }
-                        },
+                        onPressed: _register,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: colorPrimary,
                           foregroundColor: Colors.white,
@@ -277,11 +286,13 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 
-  void showCustomError(BuildContext context, String message) {
+  void showCustomError(BuildContext context, String message,
+      {Color color = Colors.red}) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red,
+        backgroundColor: color,
       ),
     );
   }

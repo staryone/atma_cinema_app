@@ -129,7 +129,7 @@ class _HomeViewState extends State<HomeView> {
             Padding(
               padding: EdgeInsets.only(left: 17),
               child: Text(
-                'Hello, ' + widget.data['fullname'],
+                'Hello, ' + widget.data['fullName'],
                 style: styleHeader,
               ),
             ),

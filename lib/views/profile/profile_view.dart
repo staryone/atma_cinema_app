@@ -1,3 +1,4 @@
+import 'package:atma_cinema/services/auth_service.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/auth/login_view.dart';
 import 'package:atma_cinema/views/profile/about_view.dart';
@@ -23,6 +24,26 @@ class _ProfileViewState extends State<ProfileView> {
     setState(() {
       profileImageUrl = newImageUrl;
     });
+  }
+
+  Future<void> _logout() async {
+    final authService = AuthService();
+    try {
+      await authService.logout();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Logout successful")),
+      );
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginView()),
+        (route) => false,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Logout failed: $e")),
+      );
+    }
   }
 
   @override
@@ -137,14 +158,7 @@ class _ProfileViewState extends State<ProfileView> {
                           "Logout",
                           style: TextStyle(color: Colors.red),
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginView(),
-                            ),
-                          );
-                        },
+                        onTap: _logout,
                       ),
                       const SizedBox(height: 20),
                       const Text(
@@ -187,7 +201,7 @@ class _ProfileViewState extends State<ProfileView> {
                   // backgroundImage: AssetImage(profileImageUrl),
                   radius: 24,
                 ),
-                title: Text(widget.data["fullname"]),
+                title: Text(widget.data["fullName"]),
                 subtitle: const Text("See Profile"),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {

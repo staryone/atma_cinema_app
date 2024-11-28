@@ -1,3 +1,4 @@
+import 'package:atma_cinema/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,8 +18,10 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -27,15 +30,62 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) {
+      if (_emailController.text.isEmpty) {
+        showCustomError(context, "Email tidak boleh kosong");
+      } else if (!_emailController.text.contains('@') ||
+          !_emailController.text.contains('.')) {
+        showCustomError(context, "Masukkan email yang valid");
+      } else if (_passwordController.text.isEmpty) {
+        showCustomError(context, "Password tidak boleh kosong");
+      } else if (_passwordController.text.length < 5) {
+        showCustomError(context, "Password minimal 5 digit");
+      }
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final authService = AuthService();
+    final loginData = {
+      'email': _emailController.text,
+      'password': _passwordController.text,
+    };
+
+    try {
+      final response = await authService.login(loginData);
+
+      if (await authService.isLoggedIn()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Login successful")),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DashboardView(data: response),
+          ),
+        );
+      } else {
+        showCustomError(context, "Login failed: Invalid response from server");
+      }
+    } catch (e) {
+      showCustomError(context, "Login failed: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Map? dataForm = widget.data;
     Map? dataForm = {};
-    dataForm['fullname'] = "Joko";
-    dataForm['email'] = "joko@gmail.com";
-    dataForm['password'] = "joko123";
-    dataForm['notelp'] = "085161182172";
-    dataForm['tglLahir'] = "12/10/1998";
+
     return Container(
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
@@ -139,38 +189,7 @@ class _LoginFormState extends State<LoginForm> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        if (!_formKey.currentState!.validate()) {
-                          if (_emailController.text.isEmpty) {
-                            showCustomError(
-                                context, "Email tidak boleh kosong");
-                          } else if (!_emailController.text.contains('@') ||
-                              !_emailController.text.contains('.')) {
-                            showCustomError(
-                                context, "Masukkan email yang valid");
-                          } else if (_passwordController.text.isEmpty) {
-                            showCustomError(
-                                context, "Password tidak boleh kosong");
-                          } else if (_passwordController.text.length < 5) {
-                            showCustomError(
-                                context, "Password minimal 5 digit");
-                          }
-                        } else {
-                          if (dataForm != null &&
-                              dataForm['email'] == _emailController.text &&
-                              dataForm['password'] == _passwordController.text) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => DashboardView(data: dataForm),
-                              ),
-                            );
-                          } else {
-                            showCustomError(
-                                context, "Username atau password salah!");
-                          }
-                        }
-                      },
+                      onPressed: _login,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorPrimary,
                         foregroundColor: Colors.white,
@@ -227,6 +246,7 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void showCustomError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),

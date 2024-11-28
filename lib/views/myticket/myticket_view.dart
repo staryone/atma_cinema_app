@@ -59,9 +59,7 @@ class _MyTicketViewState extends State<MyTicketView> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: GestureDetector(
-                onTap: () {
-                  
-                },
+                onTap: () {},
                 child: Container(
                   padding:
                       EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

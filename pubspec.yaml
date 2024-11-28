@@ -15,15 +15,17 @@ dependencies:
   flutter_native_splash: ^2.4.1
   flutter_svg: ^2.0.10+1
   google_fonts: ^6.2.1
+  http: ^1.2.2
   image_picker: ^1.1.2
   intl: ^0.19.0
   material_symbols_icons: ^4.2785.1
+  pdf: ^3.6.5
   photo_manager: ^3.6.0
+  printing: ^5.7.2
+  qr_flutter: ^4.1.0
+  shared_preferences: ^2.3.3
   smooth_page_indicator: ^1.2.0+3
   speech_to_text: ^7.0.0
-  qr_flutter: ^4.1.0
-  pdf: ^3.6.5
-  printing: ^5.7.2
   uuid: ^4.5.1
 
 dev_dependencies:
