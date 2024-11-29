@@ -1,0 +1,37 @@
+{
+  "project_info": {
+    "project_number": "226114330966",
+    "project_id": "atma-cinema-4af30",
+    "storage_bucket": "atma-cinema-4af30.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:226114330966:android:7a3283f75635a00b1436f7",
+        "android_client_info": {
+          "package_name": "com.example.atma_cinema_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "428381697620-k9q2qgjc6hfqdd7neh9kvb44b77s0gpi.apps.googleusercontent.com",
+          "project_id": "atma-cinema",
+          "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+          "token_uri": "https://oauth2.googleapis.com/token",
+          "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs"
+        }        
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4yX_hoFzOHGcmF1wm3aURN_LGnAhAuQQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

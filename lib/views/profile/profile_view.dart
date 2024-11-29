@@ -1,3 +1,4 @@
+import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/services/auth_service.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/auth/login_view.dart';
@@ -10,7 +11,7 @@ import 'package:atma_cinema/views/profile/terms_view.dart';
 import 'package:flutter/material.dart';
 
 class ProfileView extends StatefulWidget {
-  final Map data;
+  final UserModel data;
   const ProfileView({super.key, required this.data});
 
   @override
@@ -201,7 +202,7 @@ class _ProfileViewState extends State<ProfileView> {
                   // backgroundImage: AssetImage(profileImageUrl),
                   radius: 24,
                 ),
-                title: Text(widget.data["fullName"]),
+                title: Text(widget.data.fullName),
                 subtitle: const Text("See Profile"),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {

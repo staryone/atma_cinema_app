@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 class ApiService {
   final String baseUrlApi = baseUrl;
 
-  Future<dynamic> post(String endpoint, Map<String, dynamic> body, {Map<String, String>? headers}) async {
+  Future<dynamic> post(String endpoint, Map<String, dynamic> body,
+      {Map<String, String>? headers}) async {
     final url = Uri.parse('$baseUrlApi/$endpoint');
     final response = await http.post(
       url,
@@ -15,6 +16,19 @@ class ApiService {
         ...(headers ?? {}),
       },
       body: jsonEncode(body),
+    );
+    return _processResponse(response);
+  }
+
+  Future<dynamic> get(String endpoint, {Map<String, String>? headers}) async {
+    final url = Uri.parse('$baseUrlApi/$endpoint');
+    final response = await http.get(
+      url,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        ...(headers ?? {}),
+      },
     );
     return _processResponse(response);
   }

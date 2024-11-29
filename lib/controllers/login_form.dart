@@ -1,3 +1,5 @@
+import 'package:atma_cinema/clients/user_client.dart';
+import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/utils/constants.dart';
@@ -6,9 +8,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:atma_cinema/components/input_component.dart';
 import 'package:atma_cinema/views/dashboard_view.dart';
 import 'package:atma_cinema/views/auth/register_view.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginForm extends StatefulWidget {
-  final Map? data;
+  final UserModel? data;
 
   const LoginForm({super.key, this.data});
 
@@ -28,6 +31,64 @@ class _LoginFormState extends State<LoginForm> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loginWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: ['email', 'profile'],
+    );
+
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        throw Exception("Login dibatalkan");
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final authService = AuthService();
+      final loginData = {
+        'email': googleUser.email,
+        'name': googleUser.displayName,
+        'profilePicture': googleUser.photoUrl,
+      };
+
+      print(loginData);
+
+      await authService.loginWithGoogle(loginData);
+
+      if (await authService.isLoggedIn()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Login with Google successful")),
+        );
+
+        final userClient = UserClient();
+        final userData =
+            await userClient.getProfile(await authService.getToken());
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DashboardView(data: userData),
+          ),
+        );
+      } else {
+        showCustomError(
+            context, "Login failed: Invalid response from internal server");
+      }
+    } catch (e) {
+      showCustomError(context, "Login with Google failed: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _login() async {
@@ -56,17 +117,21 @@ class _LoginFormState extends State<LoginForm> {
     };
 
     try {
-      final response = await authService.login(loginData);
+      await authService.login(loginData);
 
       if (await authService.isLoggedIn()) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Login successful")),
         );
 
+        final userClient = UserClient();
+        final userData =
+            await userClient.getProfile(await authService.getToken());
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => DashboardView(data: response),
+            builder: (_) => DashboardView(data: userData),
           ),
         );
       } else {
@@ -83,7 +148,6 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    // Map? dataForm = widget.data;
     Map? dataForm = {};
 
     return Container(
@@ -107,14 +171,7 @@ class _LoginFormState extends State<LoginForm> {
         children: [
           SizedBox(height: 18),
           ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => DashboardView(data: dataForm),
-                ),
-              );
-            },
+            onPressed: _loginWithGoogle,
             icon: SvgPicture.asset('images/googleIcon.svg'),
             label: Text("Login with Google"),
             style: ElevatedButton.styleFrom(
