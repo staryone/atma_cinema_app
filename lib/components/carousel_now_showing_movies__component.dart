@@ -51,7 +51,6 @@ class _CarouselNowShowingMoviesState
               itemBuilder: (context, index, realIndex) {
                 bool isBlur = index == currentIndex;
 
-                // Get movie data
                 final movie = movies[index];
                 final imageUrl = movie.cover ?? '';
 
@@ -120,32 +119,6 @@ class _CarouselNowShowingMoviesState
           ],
         );
       },
-    );
-  }
-}
-
-class MovieDetailPage extends StatelessWidget {
-  final dynamic movie; // Replace with MovieModel if strongly typed
-
-  const MovieDetailPage({super.key, required this.movie});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(movie.movieTitle),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Movie Title: ${movie.movieTitle}'),
-            Text('Director: ${movie.director}'),
-            Text('Genre: ${movie.genre}'),
-            Image.network(movie.cover ?? ''),
-          ],
-        ),
-      ),
     );
   }
 }
