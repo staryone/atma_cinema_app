@@ -1,23 +1,28 @@
-import 'package:atma_cinema/components/carousel_blur_component.dart';
+import 'package:atma_cinema/components/carousel_now_showing_movies__component.dart';
 import 'package:atma_cinema/components/carousel_component.dart';
-import 'package:atma_cinema/components/input_component.dart';
 import 'package:atma_cinema/models/user_model.dart';
+import 'package:atma_cinema/providers/movie_provider.dart';
 import 'package:atma_cinema/utils/constants.dart';
-import 'package:atma_cinema/views/auth/login_view.dart';
 import 'package:atma_cinema/views/detail_promo_view.dart';
 import 'package:atma_cinema/views/profile/profile_view.dart';
 import 'package:atma_cinema/views/search/search_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:async';
 
-class HomeView extends StatefulWidget {
+class HomeView extends ConsumerStatefulWidget {
   final UserModel data;
   const HomeView({super.key, required this.data});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends ConsumerState<HomeView> {
+  Future<void> _refreshData() async {
+    final _ = await ref.refresh(moviesFetchNowShowingProvider.future);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -119,111 +124,109 @@ class _HomeViewState extends State<HomeView> {
             ],
           ),
         ),
-        body: ListView(
-          children: [
-            Row(
-              children: [],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 17),
-              child: Text(
-                'Hello, ' + widget.data.fullName,
-                style: styleHeader,
+        body: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: ListView(
+            children: [
+              Row(
+                children: [],
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 19),
-              child: Text(
-                'Now Showing ',
-                style: styleBold2,
+              SizedBox(
+                height: 10,
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            CarouselBlurWithIndicator(images: [
-              "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg",
-              "https://i.pinimg.com/736x/2a/02/14/2a021436434b66ad17e42a658ca3445b.jpg",
-              "https://i.pinimg.com/564x/00/69/a9/0069a94894154027cf0c748537161b42.jpg",
-            ]),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 19),
-              child: Text(
-                'Promo ',
-                style: styleBold2,
+              Padding(
+                padding: EdgeInsets.only(left: 17),
+                child: Text(
+                  'Hello, ' + widget.data.fullName,
+                  style: styleHeader,
+                ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            CarouselWithIndicator(
-              images: [
-                "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg",
-                "https://i.pinimg.com/736x/2a/02/14/2a021436434b66ad17e42a658ca3445b.jpg",
-                "https://i.pinimg.com/564x/00/69/a9/0069a94894154027cf0c748537161b42.jpg",
-                "https://i.pinimg.com/736x/41/92/ab/4192ab954554d613ee2be19e28fa1e36.jpg",
-                "https://i.pinimg.com/564x/ce/84/7c/ce847c625deb6e90bf0e5d0f4687bd3a.jpg",
-              ],
-              heightCarousel: 120,
-              enlargeCarousel: false,
-              autoPlayCarousel: true,
-              ratioCarousel: 16 / 9,
-              enableInfiniteScrollCarousel: true,
-              viewportFractionCarousel: 0.8,
-              onTap: () {
-                //tambahan untuk deatil promosi
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetailPromoView(
-                      promoImageUrl:
-                          "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg",
+              SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 19),
+                child: Text(
+                  'Now Showing ',
+                  style: styleBold2,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              CarouselNowShowingMovies(), // Carousel yang akan direfresh
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 19),
+                child: Text(
+                  'Promo ',
+                  style: styleBold2,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              CarouselWithIndicator(
+                images: [
+                  "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg",
+                  "https://i.pinimg.com/736x/2a/02/14/2a021436434b66ad17e42a658ca3445b.jpg",
+                  "https://i.pinimg.com/564x/00/69/a9/0069a94894154027cf0c748537161b42.jpg",
+                  "https://i.pinimg.com/736x/41/92/ab/4192ab954554d613ee2be19e28fa1e36.jpg",
+                  "https://i.pinimg.com/564x/ce/84/7c/ce847c625deb6e90bf0e5d0f4687bd3a.jpg",
+                ],
+                heightCarousel: 120,
+                enlargeCarousel: false,
+                autoPlayCarousel: true,
+                ratioCarousel: 16 / 9,
+                enableInfiniteScrollCarousel: true,
+                viewportFractionCarousel: 0.8,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailPromoView(
+                        promoImageUrl:
+                            "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg",
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 19),
-              child: Text(
-                'Upcoming ',
-                style: styleBold2,
+                  );
+                },
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            CarouselWithIndicator(
-              images: [
-                "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg",
-                "https://i.pinimg.com/736x/2a/02/14/2a021436434b66ad17e42a658ca3445b.jpg",
-                "https://i.pinimg.com/564x/00/69/a9/0069a94894154027cf0c748537161b42.jpg",
-                "https://i.pinimg.com/736x/41/92/ab/4192ab954554d613ee2be19e28fa1e36.jpg",
-                "https://i.pinimg.com/564x/ce/84/7c/ce847c625deb6e90bf0e5d0f4687bd3a.jpg",
-              ],
-              heightCarousel: 240,
-              enlargeCarousel: false,
-              autoPlayCarousel: false,
-              ratioCarousel: 3 / 4,
-              enableInfiniteScrollCarousel: true,
-              viewportFractionCarousel: 0.47,
-            ),
-            SizedBox(
-              height: 20,
-            ),
-          ],
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 19),
+                child: Text(
+                  'Upcoming ',
+                  style: styleBold2,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              CarouselWithIndicator(
+                images: [
+                  "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg",
+                  "https://i.pinimg.com/736x/2a/02/14/2a021436434b66ad17e42a658ca3445b.jpg",
+                  "https://i.pinimg.com/564x/00/69/a9/0069a94894154027cf0c748537161b42.jpg",
+                  "https://i.pinimg.com/736x/41/92/ab/4192ab954554d613ee2be19e28fa1e36.jpg",
+                  "https://i.pinimg.com/564x/ce/84/7c/ce847c625deb6e90bf0e5d0f4687bd3a.jpg",
+                ],
+                heightCarousel: 240,
+                enlargeCarousel: false,
+                autoPlayCarousel: false,
+                ratioCarousel: 3 / 4,
+                enableInfiniteScrollCarousel: true,
+                viewportFractionCarousel: 0.47,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );

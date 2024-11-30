@@ -2,6 +2,7 @@ import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/views/auth/login_view.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -15,7 +16,7 @@ void main() async {
     ),
   );
 
-  runApp(const MainApp());
+  runApp(ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {

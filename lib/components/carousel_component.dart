@@ -1,5 +1,4 @@
 // lib/components/carousel_with_indicator.dart
-import 'package:atma_cinema/views/myticket/myticket_view.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';

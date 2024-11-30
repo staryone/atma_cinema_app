@@ -58,8 +58,7 @@ class _LoginFormState extends State<LoginForm> {
         'name': googleUser.displayName,
         'profilePicture': googleUser.photoUrl,
       };
-
-      print(loginData);
+      // print(loginData);
 
       await authService.loginWithGoogle(loginData);
 
@@ -69,8 +68,7 @@ class _LoginFormState extends State<LoginForm> {
         );
 
         final userClient = UserClient();
-        final userData =
-            await userClient.getProfile(await authService.getToken());
+        final userData = await userClient.getProfile();
 
         Navigator.pushReplacement(
           context,
@@ -125,8 +123,7 @@ class _LoginFormState extends State<LoginForm> {
         );
 
         final userClient = UserClient();
-        final userData =
-            await userClient.getProfile(await authService.getToken());
+        final userData = await userClient.getProfile();
 
         Navigator.pushReplacement(
           context,
@@ -262,9 +259,6 @@ class _LoginFormState extends State<LoginForm> {
                         SizedBox(height: 75),
                         TextButton(
                           onPressed: () {
-                            // Map<String, dynamic> formData = {};
-                            // formData['email'] = _emailController.text;
-                            // formData['password'] = _passwordController.text;
                             pushRegister(context);
                           },
                           style: TextButton.styleFrom(
@@ -305,7 +299,9 @@ class _LoginFormState extends State<LoginForm> {
             color: Colors.black,
             height: MediaQuery.of(context).size.height,
             alignment: Alignment.center,
-            child: const CircularProgressIndicator(),
+            child: const CircularProgressIndicator(
+              color: Colors.white,
+            ),
           ),
       ],
     );
