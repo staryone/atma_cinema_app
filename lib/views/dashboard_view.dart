@@ -1,3 +1,4 @@
+import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/fnb/fnb_view.dart';
 import 'package:atma_cinema/views/myticket/myticket_view.dart';
@@ -6,7 +7,7 @@ import 'package:atma_cinema/views/home_view.dart';
 // import 'package:guidedlayout2_2140/View/view_list.dart';
 
 class DashboardView extends StatefulWidget {
-  final Map data;
+  final UserModel data;
   const DashboardView({super.key, required this.data});
 
   @override

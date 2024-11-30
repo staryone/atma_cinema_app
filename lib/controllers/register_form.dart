@@ -296,11 +296,4 @@ class _RegisterFormState extends State<RegisterForm> {
       ),
     );
   }
-
-  void pushLogin(BuildContext context, Map<String, dynamic>? dataF) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => LoginView(data: dataF)),
-    );
-  }
 }

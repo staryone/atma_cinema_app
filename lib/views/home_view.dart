@@ -1,6 +1,7 @@
 import 'package:atma_cinema/components/carousel_blur_component.dart';
 import 'package:atma_cinema/components/carousel_component.dart';
 import 'package:atma_cinema/components/input_component.dart';
+import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/auth/login_view.dart';
 import 'package:atma_cinema/views/detail_promo_view.dart';
@@ -9,7 +10,7 @@ import 'package:atma_cinema/views/search/search_view.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
-  final Map data;
+  final UserModel data;
   const HomeView({super.key, required this.data});
 
   @override
@@ -129,7 +130,7 @@ class _HomeViewState extends State<HomeView> {
             Padding(
               padding: EdgeInsets.only(left: 17),
               child: Text(
-                'Hello, ' + widget.data['fullName'],
+                'Hello, ' + widget.data.fullName,
                 style: styleHeader,
               ),
             ),

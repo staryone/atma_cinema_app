@@ -1,3 +1,4 @@
+import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/components/appbar_component.dart';
@@ -6,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginView extends StatefulWidget {
-  final Map? data;
+  final UserModel? data;
 
   const LoginView({super.key, this.data});
 
@@ -17,7 +18,7 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
-    Map? dataForm = widget.data;
+    UserModel? dataForm = widget.data;
 
     return Scaffold(
       backgroundColor: colorPrimary,

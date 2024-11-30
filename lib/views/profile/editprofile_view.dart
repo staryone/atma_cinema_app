@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/profile/camera_view.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:atma_cinema/components/input_component.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditProfileView extends StatefulWidget {
-  final Map data;
+  final UserModel data;
   const EditProfileView({super.key, required this.data});
 
   @override
@@ -148,10 +149,10 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    _emailController.text = widget.data["email"];
-    _nameController.text = widget.data["fullname"];
-    _dobController.text = widget.data["tglLahir"];
-    _phoneController.text = widget.data["notelp"];
+    _emailController.text = widget.data.email;
+    _nameController.text = widget.data.fullName;
+    _dobController.text = widget.data.dateOfBirth;
+    _phoneController.text = widget.data.phoneNumber;
 
     return Scaffold(
       backgroundColor: Colors.white,
