@@ -1,3 +1,4 @@
+import 'package:atma_cinema/views/transaction/payment/confirm_payment_view.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/views/transaction/detail_schedule_view.dart';
 import 'package:video_player/video_player.dart';
@@ -164,7 +165,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         children: const [
                           Text(
                             '3.5',
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(width: 8),
                           Icon(Icons.star, color: Colors.yellow, size: 24),
@@ -237,7 +239,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  // Navigating to the ConfirmPaymentScreen when the button is pressed
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ConfirmPaymentPage()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   shape: RoundedRectangleBorder(
