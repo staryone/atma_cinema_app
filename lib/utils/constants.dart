@@ -46,6 +46,21 @@ TextStyle styleBold2 = GoogleFonts.roboto(
     color: Color(0xff264968),
   ),
 );
+TextStyle styleBold3 = GoogleFonts.roboto(
+  textStyle: const TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+    color: Color(0xff4B91CE),
+  ),
+);
+
+TextStyle styleBold4 = GoogleFonts.roboto(
+  textStyle: const TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  ),
+);
 TextStyle styleHeader = GoogleFonts.roboto(
   textStyle: TextStyle(
     fontSize: 28,

@@ -6,18 +6,19 @@ final movieClientProvider = Provider(
   (ref) => MovieClient(),
 );
 
-final moviesFetchAllProvider = FutureProvider<List<String>>((ref) async {
+final moviesFetchAllProvider = FutureProvider<List<MovieModel>>((ref) async {
   final movieClient = ref.read(movieClientProvider);
   final movies = await movieClient.fetchAllMovies();
 
-  return movies.map((movie) => movie['cover'] as String).toList();
+  return movies.map((movie) => MovieModel.fromJson(movie)).toList();
 });
 
-final moviesFetchUpcomingProvider = FutureProvider<List<String>>((ref) async {
+final moviesFetchUpcomingProvider =
+    FutureProvider<List<MovieModel>>((ref) async {
   final movieClient = ref.read(movieClientProvider);
   final movies = await movieClient.fetchUpcomingMovies();
 
-  return movies.map((movie) => movie['cover'] as String).toList();
+  return movies.map((movie) => MovieModel.fromJson(movie)).toList();
 });
 
 final moviesFetchNowShowingProvider =

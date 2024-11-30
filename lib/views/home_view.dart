@@ -4,6 +4,7 @@ import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/providers/movie_provider.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/detail_promo_view.dart';
+import 'package:atma_cinema/views/nowshowing_view.dart';
 import 'package:atma_cinema/views/profile/profile_view.dart';
 import 'package:atma_cinema/views/search/search_view.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView> {
   Future<void> _refreshData() async {
-    final _ = await ref.refresh(moviesFetchNowShowingProvider.future);
+    ref.invalidate(moviesFetchNowShowingProvider);
   }
 
   @override
@@ -144,12 +145,27 @@ class _HomeViewState extends ConsumerState<HomeView> {
               SizedBox(
                 height: 10,
               ),
-              Padding(
-                padding: EdgeInsets.only(left: 19),
-                child: Text(
-                  'Now Showing ',
-                  style: styleBold2,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 19),
+                    child: Text(
+                      'Now Showing ',
+                      style: styleBold2,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => _onSeeAllTap(context),
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 19),
+                      child: Text(
+                        'See All ',
+                        style: styleBold3,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(
                 height: 10,
@@ -228,6 +244,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _onSeeAllTap(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const NowShowingView(),
       ),
     );
   }

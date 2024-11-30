@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:atma_cinema/models/movie_model.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -55,7 +56,7 @@ class _CarouselNowShowingMoviesState
                 final imageUrl = movie.cover ?? '';
 
                 return GestureDetector(
-                  onTap: () {},
+                  onTap: () => _onMovieTap(context, movie),
                   child: Stack(
                     children: [
                       if (isBlur)
@@ -120,5 +121,15 @@ class _CarouselNowShowingMoviesState
         );
       },
     );
+  }
+
+  void _onMovieTap(BuildContext context, MovieModel movie) {
+    print(movie.movieTitle as String);
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => MovieDetailPage(movie: movie),
+    //   ),
+    // );
   }
 }
