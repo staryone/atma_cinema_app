@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DetailPromoView extends StatefulWidget {
-  final String promoImageUrl; // Menerima URL gambar promo
+  final String promoImageUrl;
 
   const DetailPromoView({super.key, required this.promoImageUrl});
 

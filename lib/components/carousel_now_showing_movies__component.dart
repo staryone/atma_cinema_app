@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:atma_cinema/models/movie_model.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atma_cinema/providers/movie_provider.dart';
@@ -16,7 +17,7 @@ class CarouselNowShowingMovies extends ConsumerStatefulWidget {
 
   CarouselNowShowingMovies({
     super.key,
-    this.heightCarousel = 280,
+    this.heightCarousel = 300,
     this.enlargeCarousel = true,
     this.autoPlayCarousel = false,
     this.ratioCarousel = 3 / 4,
@@ -38,7 +39,44 @@ class _CarouselNowShowingMoviesState
     final moviesAsyncValue = ref.watch(moviesFetchNowShowingProvider);
 
     return moviesAsyncValue.when(
-      loading: () => Center(child: CircularProgressIndicator()),
+      loading: () => Skeletonizer(
+        child: Column(
+          children: [
+            CarouselSlider.builder(
+              itemCount: 3,
+              itemBuilder: (context, index, realIndex) {
+                return Container(
+                  margin: const EdgeInsets.all(6.0),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(24.0),
+                  ),
+                );
+              },
+              options: CarouselOptions(
+                height: widget.heightCarousel,
+                enlargeCenterPage: widget.enlargeCarousel,
+                aspectRatio: widget.ratioCarousel,
+                viewportFraction: widget.viewportFractionCarousel,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Skeletonizer(
+              child: AnimatedSmoothIndicator(
+                activeIndex: 0,
+                count: 3,
+                effect: ExpandingDotsEffect(
+                  expansionFactor: 2,
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  activeDotColor: const Color(0xfff264968),
+                  dotColor: Colors.grey.shade300,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
       error: (err, stack) => Center(child: Text('Error: $err')),
       data: (movies) {
         if (movies.isEmpty) {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,6 +31,30 @@ class ApiService {
         ...(headers ?? {}),
       },
     );
+    return _processResponse(response);
+  }
+
+  Future<dynamic> postMultipart(String endpoint, Map<String, String> fields,
+      {Map<String, String>? headers, File? file, String? fileFieldName}) async {
+    final url = Uri.parse('$baseUrlApi/$endpoint');
+
+    var request = http.MultipartRequest('POST', url);
+    
+    if (headers != null) {
+      request.headers.addAll(headers);
+    }
+
+    request.fields.addAll(fields);
+
+    if (file != null && fileFieldName != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(fileFieldName, file.path),
+      );
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
     return _processResponse(response);
   }
 

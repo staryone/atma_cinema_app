@@ -1,7 +1,9 @@
 import 'package:atma_cinema/components/carousel_now_showing_movies__component.dart';
 import 'package:atma_cinema/components/carousel_component.dart';
+import 'package:atma_cinema/components/carousel_upcoming_movie_component.dart';
 import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/providers/movie_provider.dart';
+import 'package:atma_cinema/providers/user_provider.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/detail_promo_view.dart';
 import 'package:atma_cinema/views/nowshowing_view.dart';
@@ -12,8 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 
 class HomeView extends ConsumerStatefulWidget {
-  final UserModel data;
-  const HomeView({super.key, required this.data});
+  const HomeView({super.key});
 
   @override
   ConsumerState<HomeView> createState() => _HomeViewState();
@@ -22,10 +23,13 @@ class HomeView extends ConsumerStatefulWidget {
 class _HomeViewState extends ConsumerState<HomeView> {
   Future<void> _refreshData() async {
     ref.invalidate(moviesFetchNowShowingProvider);
+    ref.invalidate(moviesFetchUpcomingProvider);
+    ref.invalidate(userFetchDataProvider);
   }
 
   @override
   Widget build(BuildContext context) {
+    final userAsyncValue = ref.watch(userFetchDataProvider);
     return Center(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -112,15 +116,40 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ProfileView(data: widget.data),
+              userAsyncValue.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stackTrace) => Center(
+                  child: Text(
+                    'Failed to load picture: $error',
+                    style: const TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-                icon: const Icon(Icons.account_circle),
-                iconSize: 30,
-                padding: EdgeInsets.only(left: 10),
+                data: (user) => IconButton(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ProfileView(),
+                    ),
+                  ),
+                  icon: (user.profilePicture != null)
+                      ? Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.grey.shade300,
+                              width: 2.0,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 15,
+                            backgroundImage: NetworkImage(user.profilePicture!),
+                            backgroundColor: Colors.grey.shade200,
+                          ),
+                        )
+                      : const Icon(Icons.account_circle),
+                  iconSize: 30,
+                  padding: EdgeInsets.only(left: 10),
+                ),
               ),
             ],
           ),
@@ -137,9 +166,20 @@ class _HomeViewState extends ConsumerState<HomeView> {
               ),
               Padding(
                 padding: EdgeInsets.only(left: 17),
-                child: Text(
-                  'Hello, ' + widget.data.fullName,
-                  style: styleHeader,
+                child: userAsyncValue.when(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (error, stackTrace) => Center(
+                    child: Text(
+                      'Failed to load fullName: $error',
+                      style: const TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  data: (user) => Text(
+                    'Hello, ' + user.fullName,
+                    style: styleHeader,
+                  ),
                 ),
               ),
               SizedBox(
@@ -170,7 +210,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
               SizedBox(
                 height: 10,
               ),
-              CarouselNowShowingMovies(), // Carousel yang akan direfresh
+              CarouselNowShowingMovies(),
               SizedBox(
                 height: 20,
               ),
@@ -223,21 +263,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
               SizedBox(
                 height: 10,
               ),
-              CarouselWithIndicator(
-                images: [
-                  "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg",
-                  "https://i.pinimg.com/736x/2a/02/14/2a021436434b66ad17e42a658ca3445b.jpg",
-                  "https://i.pinimg.com/564x/00/69/a9/0069a94894154027cf0c748537161b42.jpg",
-                  "https://i.pinimg.com/736x/41/92/ab/4192ab954554d613ee2be19e28fa1e36.jpg",
-                  "https://i.pinimg.com/564x/ce/84/7c/ce847c625deb6e90bf0e5d0f4687bd3a.jpg",
-                ],
-                heightCarousel: 240,
-                enlargeCarousel: false,
-                autoPlayCarousel: false,
-                ratioCarousel: 3 / 4,
-                enableInfiniteScrollCarousel: true,
-                viewportFractionCarousel: 0.47,
-              ),
+              CarouselUpcomingMovies(),
               SizedBox(
                 height: 20,
               ),

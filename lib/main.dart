@@ -1,4 +1,6 @@
+import 'package:atma_cinema/services/auth_service.dart';
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/views/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/views/auth/login_view.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +18,7 @@ void main() async {
     ),
   );
 
-  runApp(ProviderScope(child: MainApp()));
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {
@@ -38,6 +40,32 @@ class MainApp extends StatelessWidget {
   }
 }
 
+class AuthMiddleware extends StatelessWidget {
+  const AuthMiddleware({super.key});
+
+  Future<bool> checkLoginStatus() async {
+    return await AuthService().isLoggedIn();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: checkLoginStatus(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError || snapshot.data == false) {
+          return const LoginView();
+        }
+
+        return DashboardView();
+      },
+    );
+  }
+}
+
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -47,9 +75,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 4), () {
+    Timer(const Duration(seconds: 4), () {
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => LoginView()));
+          MaterialPageRoute(builder: (context) => AuthMiddleware()));
     });
   }
 
@@ -57,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -85,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       text: "Atma",
                       style: GoogleFonts.poppins(
                         color: Colors.white,
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
                         ),
@@ -94,8 +122,8 @@ class _SplashScreenState extends State<SplashScreen> {
                     TextSpan(
                       text: " Cinema",
                       style: GoogleFonts.poppins(
-                        color: Color(0xFFEAD8B1),
-                        textStyle: TextStyle(
+                        color: const Color(0xFFEAD8B1),
+                        textStyle: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
                         ),

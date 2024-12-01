@@ -1,4 +1,5 @@
 import 'package:atma_cinema/clients/user_client.dart';
+import 'package:atma_cinema/components/custom_snackbar_component.dart';
 import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -68,20 +69,20 @@ class _LoginFormState extends State<LoginForm> {
         );
 
         final userClient = UserClient();
-        final userData = await userClient.getProfile();
 
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => DashboardView(data: userData),
+            builder: (_) => DashboardView(),
           ),
         );
       } else {
-        showCustomError(
+        CustomSnackbarComponent.showCustomError(
             context, "Login failed: Invalid response from internal server");
       }
     } catch (e) {
-      showCustomError(context, "Login with Google failed: $e");
+      CustomSnackbarComponent.showCustomError(
+          context, "Login with Google failed: $e");
     } finally {
       setState(() {
         _isLoading = false;
@@ -92,14 +93,18 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) {
       if (_emailController.text.isEmpty) {
-        showCustomError(context, "Email tidak boleh kosong");
+        CustomSnackbarComponent.showCustomError(
+            context, "Email tidak boleh kosong");
       } else if (!_emailController.text.contains('@') ||
           !_emailController.text.contains('.')) {
-        showCustomError(context, "Masukkan email yang valid");
+        CustomSnackbarComponent.showCustomError(
+            context, "Masukkan email yang valid");
       } else if (_passwordController.text.isEmpty) {
-        showCustomError(context, "Password tidak boleh kosong");
+        CustomSnackbarComponent.showCustomError(
+            context, "Password tidak boleh kosong");
       } else if (_passwordController.text.length < 5) {
-        showCustomError(context, "Password minimal 5 digit");
+        CustomSnackbarComponent.showCustomError(
+            context, "Password minimal 5 digit");
       }
       return;
     }
@@ -128,14 +133,15 @@ class _LoginFormState extends State<LoginForm> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => DashboardView(data: userData),
+            builder: (_) => DashboardView(),
           ),
         );
       } else {
-        showCustomError(context, "Login failed: Invalid response from server");
+        CustomSnackbarComponent.showCustomError(
+            context, "Login failed: Invalid response from server");
       }
     } catch (e) {
-      showCustomError(context, "Login failed: $e");
+      CustomSnackbarComponent.showCustomError(context, "Login failed: $e");
     } finally {
       setState(() {
         _isLoading = false;
@@ -304,16 +310,6 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
       ],
-    );
-  }
-
-  void showCustomError(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
     );
   }
 

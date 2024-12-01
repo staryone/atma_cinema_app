@@ -25,6 +25,7 @@ class InputForm extends StatefulWidget {
   final bool password;
   final bool isDate;
   final VoidCallback? onToggleVisibility;
+  final VoidCallback? onTap;
   final Color? borderColor;
 
   const InputForm({
@@ -39,6 +40,7 @@ class InputForm extends StatefulWidget {
     this.isDate = false,
     this.onToggleVisibility,
     this.borderColor,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -99,7 +101,7 @@ class _InputFormState extends State<InputForm> {
               keyboardType:
                   widget.isDate ? TextInputType.none : widget.txtInputType,
               readOnly: widget.isDate,
-              onTap: widget.isDate ? () => _selectDate(context) : null,
+              onTap: widget.onTap,
               decoration: InputDecoration(
                 hintText: widget.hintTxt,
                 hintStyle: TextStyle(

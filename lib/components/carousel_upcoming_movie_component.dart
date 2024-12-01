@@ -1,86 +1,136 @@
 // lib/components/carousel_with_indicator.dart
+import 'package:atma_cinema/providers/movie_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class CarouselWithIndicator extends StatefulWidget {
-  final List<String> images;
+class CarouselUpcomingMovies extends ConsumerStatefulWidget {
   final double? heightCarousel;
   final bool? enlargeCarousel;
   final bool autoPlayCarousel;
   final double ratioCarousel;
   final bool enableInfiniteScrollCarousel;
   final double viewportFractionCarousel;
-  final GestureTapCallback? onTap;
 
-  CarouselWithIndicator({
+  CarouselUpcomingMovies({
     super.key,
-    required this.images,
-    this.heightCarousel = 280,
-    this.enlargeCarousel = true,
+    this.heightCarousel = 240,
+    this.enlargeCarousel = false,
     this.autoPlayCarousel = false,
     this.ratioCarousel = 3 / 4,
-    this.enableInfiniteScrollCarousel = false,
-    this.viewportFractionCarousel = 0.55,
-    this.onTap,
+    this.enableInfiniteScrollCarousel = true,
+    this.viewportFractionCarousel = 0.47,
   });
 
   @override
-  createState() => _CarouselWithIndicatorState();
+  ConsumerState<CarouselUpcomingMovies> createState() =>
+      _CarouselUpcomingMoviesState();
 }
 
-class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
+class _CarouselUpcomingMoviesState
+    extends ConsumerState<CarouselUpcomingMovies> {
   int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CarouselSlider(
-          items: widget.images.map((imageUrl) {
-            return GestureDetector(
-              onTap: widget.onTap,
-              child: Container(
-                margin: const EdgeInsets.all(6.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24.0),
-                  image: DecorationImage(
-                    image: imageUrl.contains('http')
-                        ? NetworkImage(imageUrl)
-                        : AssetImage(imageUrl),
-                    fit: BoxFit.cover,
+    final moviesAsyncValue = ref.watch(moviesFetchUpcomingProvider);
+
+    return moviesAsyncValue.when(
+      loading: () => Skeletonizer(
+        child: Column(
+          children: [
+            CarouselSlider.builder(
+              itemCount: 5,
+              itemBuilder: (context, index, realIndex) {
+                return Container(
+                  margin: const EdgeInsets.all(6.0),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(24.0),
                   ),
+                );
+              },
+              options: CarouselOptions(
+                height: widget.heightCarousel,
+                enlargeCenterPage: widget.enlargeCarousel,
+                aspectRatio: widget.ratioCarousel,
+                viewportFraction: widget.viewportFractionCarousel,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Skeletonizer(
+              child: AnimatedSmoothIndicator(
+                activeIndex: 0,
+                count: 5,
+                effect: ExpandingDotsEffect(
+                  expansionFactor: 2,
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  activeDotColor: const Color(0xfff264968),
+                  dotColor: Colors.grey.shade300,
                 ),
               ),
-            );
-          }).toList(),
-          options: CarouselOptions(
-            height: widget.heightCarousel,
-            enlargeCenterPage: widget.enlargeCarousel,
-            autoPlay: widget.autoPlayCarousel,
-            aspectRatio: widget.ratioCarousel,
-            enableInfiniteScroll: widget.enableInfiniteScrollCarousel,
-            viewportFraction: widget.viewportFractionCarousel,
-            onPageChanged: (index, reason) {
-              setState(() {
-                currentIndex = index;
-              });
-            },
-          ),
+            ),
+          ],
         ),
-        const SizedBox(height: 20),
-        AnimatedSmoothIndicator(
-          activeIndex: currentIndex,
-          count: widget.images.length,
-          effect: ExpandingDotsEffect(
-            expansionFactor: 2,
-            dotHeight: 8,
-            dotWidth: 8,
-            activeDotColor: Color(0xfff264968),
-            dotColor: Colors.grey.shade400,
-          ),
-        ),
-      ],
+      ),
+      error: (err, stack) => Center(child: Text('Error: $err')),
+      data: (movies) {
+        if (movies.isEmpty) {
+          return Center(child: Text("No upcoming movies available"));
+        }
+        return Column(
+          children: [
+            CarouselSlider.builder(
+              itemCount: movies.length,
+              itemBuilder: (context, index, realIndex) {
+                final movie = movies[index];
+                final imageUrl = movie.cover ?? '';
+
+                return GestureDetector(
+                  child: Container(
+                    margin: const EdgeInsets.all(6.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24.0),
+                      image: DecorationImage(
+                        image: NetworkImage(imageUrl),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                );
+              },
+              options: CarouselOptions(
+                height: widget.heightCarousel,
+                enlargeCenterPage: widget.enlargeCarousel,
+                autoPlay: widget.autoPlayCarousel,
+                aspectRatio: widget.ratioCarousel,
+                enableInfiniteScroll: widget.enableInfiniteScrollCarousel,
+                viewportFraction: widget.viewportFractionCarousel,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+            AnimatedSmoothIndicator(
+              activeIndex: currentIndex,
+              count: movies.length,
+              effect: ExpandingDotsEffect(
+                expansionFactor: 2,
+                dotHeight: 8,
+                dotWidth: 8,
+                activeDotColor: Color(0xfff264968),
+                dotColor: Colors.grey.shade400,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

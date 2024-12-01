@@ -1,29 +1,46 @@
 import 'dart:io';
 
+import 'package:atma_cinema/clients/user_client.dart';
+import 'package:atma_cinema/components/custom_snackbar_component.dart';
 import 'package:atma_cinema/models/user_model.dart';
+import 'package:atma_cinema/providers/user_provider.dart';
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/utils/date_utils.dart';
 import 'package:atma_cinema/views/profile/camera_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:atma_cinema/components/input_component.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
-class EditProfileView extends StatefulWidget {
+class EditProfileView extends ConsumerStatefulWidget {
   final UserModel data;
   const EditProfileView({super.key, required this.data});
 
   @override
-  State<EditProfileView> createState() => _EditProfileViewState();
+  ConsumerState<EditProfileView> createState() => _EditProfileViewState();
 }
 
-class _EditProfileViewState extends State<EditProfileView> {
+class _EditProfileViewState extends ConsumerState<EditProfileView> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   String? _gender;
   String? _imagePath;
+  bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    _emailController.text = widget.data.email;
+    _nameController.text = widget.data.fullName;
+    _dobController.text = formatDate(widget.data.dateOfBirth);
+    _phoneController.text = widget.data.phoneNumber;
+    _gender = widget.data.gender;
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -32,6 +49,10 @@ class _EditProfileViewState extends State<EditProfileView> {
     _emailController.dispose();
     _phoneController.dispose();
     super.dispose();
+  }
+
+  Future<void> _refreshData() async {
+    ref.invalidate(userFetchDataProvider);
   }
 
   Future<void> _openCamera() async {
@@ -65,27 +86,27 @@ class _EditProfileViewState extends State<EditProfileView> {
     }
   }
 
-  // Future<void> _openLibrary() async {
-  //   final result = await Navigator.push(
-  //     context,
-  //     PageRouteBuilder(
-  //       pageBuilder: (context, animation, secondaryAnimation) => LibraryView(),
-  //       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-  //         return FadeTransition(
-  //           opacity: animation,
-  //           child: child,
-  //         );
-  //       },
-  //       transitionDuration: Duration(milliseconds: 300),
-  //     ),
-  //   );
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime initialDate;
+    try {
+      initialDate = DateFormat("dd/MM/yyyy").parse(_dobController.text);
+    } catch (e) {
+      initialDate = DateTime.now();
+    }
 
-  //   if (result != null && result is String) {
-  //     setState(() {
-  //       _imagePath = result;
-  //     });
-  //   }
-  // }
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _dobController.text = DateFormat("dd/MM/yyyy").format(pickedDate);
+      });
+    }
+  }
 
   void _showProfilePictureOptions() {
     showModalBottomSheet(
@@ -140,6 +161,39 @@ class _EditProfileViewState extends State<EditProfileView> {
     );
   }
 
+  void _updateProfile() async {
+    Map<String, dynamic> data = {
+      'fullName': _nameController.text,
+      'email': _emailController.text,
+      'dateOfBirth': _dobController.text,
+      'gender': _gender,
+      'phoneNumber': _phoneController.text,
+    };
+
+    if (_imagePath != null) {
+      data['profilePicture'] = File(_imagePath!);
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final userClient = UserClient();
+
+    try {
+      print(await userClient.updateProfile(data));
+
+      CustomSnackbarComponent.showCustomSuccess(context, "Update successful");
+    } catch (e) {
+      CustomSnackbarComponent.showCustomError(context, "Update failed: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+        _refreshData();
+      });
+    }
+  }
+
   String? _validateRequired(String? value) {
     if (value == null || value.isEmpty) {
       return 'This field is required';
@@ -149,11 +203,6 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    _emailController.text = widget.data.email;
-    _nameController.text = widget.data.fullName;
-    _dobController.text = widget.data.dateOfBirth;
-    _phoneController.text = widget.data.phoneNumber;
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -183,7 +232,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                         backgroundColor: Colors.grey.shade300,
                         backgroundImage: (_imagePath != null)
                             ? FileImage(File(_imagePath!))
-                            : null,
+                            : (widget.data.profilePicture != null)
+                                ? NetworkImage(widget.data.profilePicture!)
+                                : null,
                         child: Icon(
                           Icons.camera_alt,
                           color: Colors.grey.withOpacity(0.5),
@@ -220,6 +271,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                 hintTxt: 'Select your date of birth',
                 labelTxt: 'Date of Birth *',
                 isDate: true,
+                onTap: () => _selectDate(context),
                 iconData: Icons.calendar_today,
               ),
               Column(
@@ -250,7 +302,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                 controller: _emailController,
                 hintTxt: 'Enter your email',
                 labelTxt: 'Email *',
-                iconData: Icons.check_circle, // Icon untuk status verifikasi
+                iconData: Icons.check_circle,
               ),
               InputForm(
                 validasi: (value) => null,
@@ -269,7 +321,7 @@ class _EditProfileViewState extends State<EditProfileView> {
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => _updateProfile(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colorPrimary,
                     // primary: const Color(0xFF0D47A1),

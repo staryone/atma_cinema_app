@@ -7,8 +7,7 @@ import 'package:atma_cinema/views/home_view.dart';
 // import 'package:guidedlayout2_2140/View/view_list.dart';
 
 class DashboardView extends StatefulWidget {
-  final UserModel data;
-  const DashboardView({super.key, required this.data});
+  const DashboardView({super.key});
 
   @override
   State<DashboardView> createState() => _DashboardViewState();
@@ -26,7 +25,7 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _widgetOptions = <Widget>[
-      HomeView(data: widget.data),
+      HomeView(),
       MyTicketView(),
       FnbView(),
     ];

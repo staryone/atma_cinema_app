@@ -1,4 +1,5 @@
 import 'package:atma_cinema/models/user_model.dart';
+import 'package:atma_cinema/providers/user_provider.dart';
 import 'package:atma_cinema/services/auth_service.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/auth/login_view.dart';
@@ -9,24 +10,16 @@ import 'package:atma_cinema/views/profile/help_center_view.dart';
 import 'package:atma_cinema/views/profile/privacy_view.dart';
 import 'package:atma_cinema/views/profile/terms_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProfileView extends StatefulWidget {
-  final UserModel data;
-  const ProfileView({super.key, required this.data});
+class ProfileView extends ConsumerStatefulWidget {
+  const ProfileView({super.key});
 
   @override
-  State<ProfileView> createState() => _ProfileViewState();
+  ConsumerState<ProfileView> createState() => _ProfileViewState();
 }
 
-class _ProfileViewState extends State<ProfileView> {
-  String profileImageUrl = '';
-
-  void updateProfileImage(String newImageUrl) {
-    setState(() {
-      profileImageUrl = newImageUrl;
-    });
-  }
-
+class _ProfileViewState extends ConsumerState<ProfileView> {
   Future<void> _logout() async {
     final authService = AuthService();
     try {
@@ -49,6 +42,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    final userAsyncValue = ref.watch(userFetchDataProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -197,33 +191,45 @@ class _ProfileViewState extends State<ProfileView> {
               ),
               color: Colors.white,
               elevation: 2,
-              child: ListTile(
-                leading: CircleAvatar(
-                  // backgroundImage: AssetImage(profileImageUrl),
-                  radius: 24,
+              child: userAsyncValue.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stackTrace) => Center(
+                  child: Text(
+                    'Failed to load data: $error',
+                    style: const TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                title: Text(widget.data.fullName),
-                subtitle: const Text("See Profile"),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          EditProfileView(
-                        data: widget.data,
+                data: (user) => ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: (user.profilePicture != null)
+                        ? NetworkImage(user.profilePicture!)
+                        : null,
+                    radius: 24,
+                  ),
+                  title: Text(user.fullName),
+                  subtitle: const Text("See Profile"),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            EditProfileView(
+                          data: user,
+                        ),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                        transitionDuration: Duration(milliseconds: 300),
                       ),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-                      },
-                      transitionDuration: Duration(milliseconds: 300),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
