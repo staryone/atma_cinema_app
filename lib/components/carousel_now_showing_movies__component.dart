@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:atma_cinema/models/movie_model.dart';
+import 'package:atma_cinema/views/transaction/detail_schedule_view.dart';
+import 'package:atma_cinema/views/transaction/schedule_view.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -163,11 +165,11 @@ class _CarouselNowShowingMoviesState
 
   void _onMovieTap(BuildContext context, MovieModel movie) {
     print(movie.movieTitle as String);
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => MovieDetailPage(movie: movie),
-    //   ),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieDetailScreen(),
+      ),
+    );
   }
 }

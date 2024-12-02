@@ -122,8 +122,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Movie Poster
-                          Image.asset(
-                            'assets/excavator.jpg',
+                          Image.network(
+                            'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg',
                             width: 100,
                             height: 150,
                             fit: BoxFit.cover,
