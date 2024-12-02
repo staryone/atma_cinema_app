@@ -194,10 +194,14 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               child: userAsyncValue.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stackTrace) => Center(
-                  child: Text(
-                    'Failed to load data: $error',
-                    style: const TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 24,
+                    ),
+                    title: Text("Undefined"),
+                    subtitle: const Text("See Profile"),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {},
                   ),
                 ),
                 data: (user) => ListTile(

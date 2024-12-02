@@ -119,7 +119,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
               userAsyncValue.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stackTrace) => Center(
-                  child: const Icon(Icons.account_circle),
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => ProfileView(),
+                      ),
+                    ),
+                    icon: const Icon(Icons.account_circle),
+                    iconSize: 30,
+                    padding: EdgeInsets.only(left: 10),
+                  ),
                 ),
                 data: (user) => IconButton(
                   onPressed: () => Navigator.of(context).push(
