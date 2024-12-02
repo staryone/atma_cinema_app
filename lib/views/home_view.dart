@@ -30,6 +30,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     final userAsyncValue = ref.watch(userFetchDataProvider);
+    // print(userAsyncValue);
     return Center(
       child: Scaffold(
         backgroundColor: Colors.white,
