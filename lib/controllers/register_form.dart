@@ -3,6 +3,7 @@ import 'package:atma_cinema/utils/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:atma_cinema/components/input_component.dart';
 import 'package:atma_cinema/services/auth_service.dart';
+import 'package:intl/intl.dart';
 
 class RegisterForm extends StatefulWidget {
   final Map? data;
@@ -34,6 +35,28 @@ class _RegisterFormState extends State<RegisterForm> {
     _notelpController.dispose();
     _tanggalController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime initialDate;
+    try {
+      initialDate = DateFormat("dd/MM/yyyy").parse(_tanggalController.text);
+    } catch (e) {
+      initialDate = DateTime.now();
+    }
+
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _tanggalController.text = DateFormat("dd/MM/yyyy").format(pickedDate);
+      });
+    }
   }
 
   Future<void> _register() async {
@@ -202,6 +225,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     iconData: Icons.calendar_month,
                     labelTxt: "Date of Birth",
                     isDate: true,
+                    onTap: () => _selectDate(context),
                   ),
                   StatefulBuilder(
                     builder: (context, setState) {

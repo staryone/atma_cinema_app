@@ -119,11 +119,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
               userAsyncValue.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stackTrace) => Center(
-                  child: Text(
-                    'Failed to load picture: $error',
-                    style: const TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
+                  child: const Icon(Icons.account_circle),
                 ),
                 data: (user) => IconButton(
                   onPressed: () => Navigator.of(context).push(
@@ -171,7 +167,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       const Center(child: CircularProgressIndicator()),
                   error: (error, stackTrace) => Center(
                     child: Text(
-                      'Failed to load fullName: $error',
+                      'Failed to load fullName',
                       style: const TextStyle(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
