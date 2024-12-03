@@ -1,3 +1,4 @@
+import 'package:atma_cinema/views/transaction/seat_view.dart';
 import 'package:flutter/material.dart';
 
 class MovieTestPage extends StatelessWidget {
@@ -233,7 +234,14 @@ class MovieTestPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               color: Colors.blue,
               child: TextButton.icon(
-                onPressed: () {},
+                onPressed: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SeatSelectionScreen(),
+                    ),
+                  )
+                },
                 icon: Icon(Icons.local_movies, color: Colors.white),
                 label: Text(
                   'Buy Ticket',
