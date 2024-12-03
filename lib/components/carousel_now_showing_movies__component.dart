@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:atma_cinema/models/movie_model.dart';
 import 'package:atma_cinema/views/transaction/detail_schedule_view.dart';
 import 'package:atma_cinema/views/transaction/schedule_view.dart';
+import 'package:atma_cinema/views/transaction/test_view.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -168,7 +169,7 @@ class _CarouselNowShowingMoviesState
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MovieDetailScreen(),
+        builder: (context) => MovieTestPage(),
       ),
     );
   }
