@@ -233,7 +233,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
               SizedBox(
                 height: 10,
               ),
-              CarouselPromo(),
+              CarouselPromo(
+                provider: promosFetchGeneralProvider,
+              ),
               SizedBox(
                 height: 20,
               ),

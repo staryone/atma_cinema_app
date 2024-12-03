@@ -17,7 +17,6 @@ final promosFetchGeneralProvider =
     FutureProvider<List<PromoModel>>((ref) async {
   final promoClient = ref.read(promoClientProvider);
   final promos = await promoClient.fetchGeneralPromos();
-  print(promos);
 
   return promos.map((promo) => PromoModel.fromJson(promo)).toList();
 });

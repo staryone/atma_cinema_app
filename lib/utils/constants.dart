@@ -5,6 +5,7 @@ import 'package:material_symbols_icons/get.dart';
 const String baseUrl = "http://192.168.56.1:8000/api";
 const Color colorPrimary = Color(0xFF001F3F);
 const Color colorBorder = Color(0xFFD9D9D9);
+const Color colorGold = Color(0xFFEAD8B1);
 
 final Shader linearGradient = const LinearGradient(
   colors: <Color>[Color(0xff264968), Color(0xff4B91CE)],

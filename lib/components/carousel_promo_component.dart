@@ -1,4 +1,5 @@
 // lib/components/carousel_with_indicator.dart
+import 'package:atma_cinema/models/promo_model.dart';
 import 'package:atma_cinema/providers/promo_provider.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class CarouselPromo extends ConsumerStatefulWidget {
   final double ratioCarousel;
   final bool enableInfiniteScrollCarousel;
   final double viewportFractionCarousel;
+  final FutureProvider<List<PromoModel>> provider;
 
   CarouselPromo({
     super.key,
@@ -23,6 +25,7 @@ class CarouselPromo extends ConsumerStatefulWidget {
     this.ratioCarousel = 16 / 9,
     this.enableInfiniteScrollCarousel = true,
     this.viewportFractionCarousel = 0.8,
+    required this.provider,
   });
 
   @override
@@ -34,8 +37,7 @@ class _CarouselPromoState extends ConsumerState<CarouselPromo> {
 
   @override
   Widget build(BuildContext context) {
-    final promosAsyncValue = ref.watch(promosFetchGeneralProvider);
-    print(promosAsyncValue);
+    final promosAsyncValue = ref.watch(widget.provider);
 
     return promosAsyncValue.when(
       loading: () => Skeletonizer(
