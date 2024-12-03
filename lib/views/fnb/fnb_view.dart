@@ -17,6 +17,7 @@ class FnbView extends ConsumerStatefulWidget {
 class _FnbViewState extends ConsumerState<FnbView> {
   @override
   Widget build(BuildContext context) {
+    final selectedCategory = ref.watch(selectedCategoryProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -53,6 +54,15 @@ class _FnbViewState extends ConsumerState<FnbView> {
                 _buildCategoryButton('Drinks'),
                 _buildCategoryButton('Light Meal'),
               ],
+            ),
+          ),
+          SizedBox(height: 32),
+          Padding(
+            padding: const EdgeInsets.only(left: 32.0),
+            child: Text(
+              selectedCategory,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.start,
             ),
           ),
           SingleChildScrollView(
