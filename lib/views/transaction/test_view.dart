@@ -16,20 +16,7 @@ class MovieTestPage extends StatelessWidget {
       length: 2,
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {},
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.more_vert, color: Colors.black),
-              onPressed: () {},
-            ),
-          ],
-        ),
+        appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
         body: Column(
           children: [
             // Header
