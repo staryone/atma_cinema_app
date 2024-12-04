@@ -1,3 +1,4 @@
+import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/transaction/seat_view.dart';
 import 'package:flutter/material.dart';
 
@@ -106,8 +107,10 @@ class MovieTestPage extends StatelessWidget {
                           SizedBox(height: 16),
                           // Tab Section
                           TabBar(
-                            indicatorColor: Colors.blue,
-                            labelColor: Colors.blue,
+                            indicatorColor: colorPrimary,
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            indicatorWeight: 3,
+                            labelColor: colorPrimary,
                             unselectedLabelColor: Colors.grey,
                             tabs: [
                               Tab(text: 'About Movie'),
@@ -151,7 +154,7 @@ class MovieTestPage extends StatelessWidget {
                                           horizontal: 16, vertical: 12),
                                       decoration: BoxDecoration(
                                         color: isSelected
-                                            ? Colors.blue
+                                            ? colorPrimary
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
@@ -218,8 +221,9 @@ class MovieTestPage extends StatelessWidget {
             // Buy Ticket Button
             Container(
               width: double.infinity,
+              height: 70,
               padding: const EdgeInsets.all(16),
-              color: Colors.blue,
+              color: colorPrimary,
               child: TextButton.icon(
                 onPressed: () => {
                   Navigator.push(
