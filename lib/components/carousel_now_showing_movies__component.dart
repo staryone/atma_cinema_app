@@ -43,6 +43,8 @@ class _CarouselNowShowingMoviesState
 
     return moviesAsyncValue.when(
       loading: () => Skeletonizer(
+        enabled: true,
+        effect: ShimmerEffect(),
         child: Column(
           children: [
             CarouselSlider.builder(

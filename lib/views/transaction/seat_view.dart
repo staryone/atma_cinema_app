@@ -21,6 +21,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     {'id': 'B13', 'status': 'available'},
     {'id': 'B14', 'status': 'available'},
     {'id': 'B15', 'status': 'available'},
+    {'id': 'B16', 'status': 'available'},
   ];
 
   List<String> selectedSeats = [];

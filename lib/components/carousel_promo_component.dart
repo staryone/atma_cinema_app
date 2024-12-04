@@ -41,6 +41,8 @@ class _CarouselPromoState extends ConsumerState<CarouselPromo> {
 
     return promosAsyncValue.when(
       loading: () => Skeletonizer(
+        enabled: true,
+        effect: ShimmerEffect(),
         child: Column(
           children: [
             CarouselSlider.builder(

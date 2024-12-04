@@ -108,11 +108,8 @@ class OrderCard extends StatelessWidget {
           MaterialPageRoute(builder: (context) => TicketDetailPage()),
         );
       },
-      child: Card(
+      child: Container(
         color: Color.fromARGB(255, 252, 252, 252),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        shadowColor: colorPrimary,
-        elevation: 1,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(

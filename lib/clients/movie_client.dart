@@ -29,4 +29,9 @@ class MovieClient {
     final response = await _api.get('movies/now-showing');
     return response;
   }
+
+  Future<List<dynamic>> searchMovies(String query) async {
+    final response = await _api.get('movies/search?query=$query');
+    return response;
+  }
 }

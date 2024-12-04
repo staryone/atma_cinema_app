@@ -1,16 +1,19 @@
+import 'package:atma_cinema/components/list_search_component.dart';
+import 'package:atma_cinema/providers/movie_provider.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-class SearchView extends StatefulWidget {
+class SearchView extends ConsumerStatefulWidget {
   final bool? isClickVoice;
   const SearchView({super.key, this.isClickVoice = false});
 
   @override
-  State<SearchView> createState() => _SearchViewState();
+  ConsumerState<SearchView> createState() => _SearchViewState();
 }
 
-class _SearchViewState extends State<SearchView>
+class _SearchViewState extends ConsumerState<SearchView>
     with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   late stt.SpeechToText _speech;
@@ -38,7 +41,7 @@ class _SearchViewState extends State<SearchView>
   }
 
   void _performSearch(String query) {
-    print("Hasil pencarian untuk: $query");
+    ref.read(querySearchProvider.notifier).state = query;
   }
 
   void _startListening() async {
@@ -126,7 +129,7 @@ class _SearchViewState extends State<SearchView>
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                       ),
-                      onSubmitted: (query) {
+                      onChanged: (query) {
                         _performSearch(query);
                       },
                     ),
@@ -136,8 +139,35 @@ class _SearchViewState extends State<SearchView>
             ),
           ),
           body: Padding(
-            padding: EdgeInsets.only(left: 20),
-            child: Text('Hasil pencarian akan tampil di sini'),
+            padding: const EdgeInsets.only(
+                top: 4.0, bottom: 16.0, left: 16.0, right: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Text(
+                      "Recent searches",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "See All",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                ListItemSearch(),
+              ],
+            ),
           ),
         ),
         if (_isListening)
