@@ -77,7 +77,7 @@ class _MyTicketViewState extends State<MyTicketView> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -156,10 +156,4 @@ class _MyTicketViewState extends State<MyTicketView> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: MyTicketView(),
-  ));
 }

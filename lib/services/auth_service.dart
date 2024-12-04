@@ -47,6 +47,10 @@ class AuthService {
     return await _secureStorage.read(key: "token");
   }
 
+  Future<String?> getUserID() async {
+    return await _secureStorage.read(key: "userID");
+  }
+
   Future<void> logout() async {
     final token = await getToken();
     if (await _googleSignIn.isSignedIn()) {

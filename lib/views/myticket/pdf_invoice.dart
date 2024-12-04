@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 
 Future<void> createPdf(
-  TextEditingController nameController,
+  String nameController,
   String ticketId,
   DateTime airingDate,
   String time,
@@ -38,7 +38,9 @@ Future<void> createPdf(
         return [
           pw.Header(
             level: 0,
-            child: pw.Text('INVOICE', style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
+            child: pw.Text('INVOICE',
+                style:
+                    pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
           ),
           pw.SizedBox(height: 20),
           pw.Row(
@@ -47,9 +49,10 @@ Future<void> createPdf(
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Text("Buyer: ${nameController.text}"),
+                  pw.Text("Buyer: ${nameController}"),
                   pw.Text("Ticket ID: $ticketId"),
-                  pw.Text("Airing date: ${DateFormat('d MMMM yyyy').format(airingDate)}"),
+                  pw.Text(
+                      "Airing date: ${DateFormat('d MMMM yyyy').format(airingDate)}"),
                   pw.Text("Time: $time"),
                 ],
               ),
@@ -62,7 +65,8 @@ Future<void> createPdf(
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
-              pw.Text("TOTAL PAYMENT", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              pw.Text("TOTAL PAYMENT",
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
               pw.Text("Rp ${grandTotal.toStringAsFixed(2)}"),
             ],
           ),
@@ -76,7 +80,8 @@ Future<void> createPdf(
             ],
           ),
           pw.SizedBox(height: 20),
-          pw.Text("*This invoice is valid and processed by computer*", style: pw.TextStyle(color: PdfColor.fromHex("#FF0000"))),
+          pw.Text("*This invoice is valid and processed by computer*",
+              style: pw.TextStyle(color: PdfColor.fromHex("#FF0000"))),
         ];
       },
     ),
@@ -88,7 +93,6 @@ Future<void> createPdf(
   );
 }
 
-
 class CustomRow {
   final String description;
   final String numberOfSeat;
@@ -97,7 +101,8 @@ class CustomRow {
 
   CustomRow(this.description, this.numberOfSeat, this.tax, this.price);
 
-  double get total => double.parse(tax) + (double.parse(price) * int.parse(numberOfSeat));
+  double get total =>
+      double.parse(tax) + (double.parse(price) * int.parse(numberOfSeat));
 }
 
 pw.Widget itemColumn(List<CustomRow> elements) {
@@ -112,11 +117,13 @@ pw.Widget itemColumn(List<CustomRow> elements) {
         children: [
           pw.Padding(
             padding: pw.EdgeInsets.all(8),
-            child: pw.Text("DESCRIPTION", style: pw.TextStyle(color: PdfColors.white)),
+            child: pw.Text("DESCRIPTION",
+                style: pw.TextStyle(color: PdfColors.white)),
           ),
           pw.Padding(
             padding: pw.EdgeInsets.all(8),
-            child: pw.Text("NUMBER OF SEAT", style: pw.TextStyle(color: PdfColors.white)),
+            child: pw.Text("NUMBER OF SEAT",
+                style: pw.TextStyle(color: PdfColors.white)),
           ),
           pw.Padding(
             padding: pw.EdgeInsets.all(8),
@@ -124,7 +131,8 @@ pw.Widget itemColumn(List<CustomRow> elements) {
           ),
           pw.Padding(
             padding: pw.EdgeInsets.all(8),
-            child: pw.Text("PRICE", style: pw.TextStyle(color: PdfColors.white)),
+            child:
+                pw.Text("PRICE", style: pw.TextStyle(color: PdfColors.white)),
           ),
         ],
       ),
@@ -157,14 +165,15 @@ pw.Widget itemColumn(List<CustomRow> elements) {
 class PreviewScreen extends StatelessWidget {
   final pw.Document doc;
 
-  const PreviewScreen({Key? key, required this.doc}): super(key: key);
+  const PreviewScreen({Key? key, required this.doc}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () => Navigator.pop(context), 
+          color: Colors.white,
+          onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back_outlined),
         ),
         centerTitle: true,

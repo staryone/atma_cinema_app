@@ -39,7 +39,7 @@ class ApiService {
     final url = Uri.parse('$baseUrlApi/$endpoint');
 
     var request = http.MultipartRequest('POST', url);
-    
+
     if (headers != null) {
       request.headers.addAll(headers);
     }

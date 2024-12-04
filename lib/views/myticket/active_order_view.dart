@@ -1,82 +1,99 @@
+import 'package:atma_cinema/models/ticket_model.dart';
+import 'package:atma_cinema/providers/ticket_provider.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/myticket/detail_ticket_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
-class ActiveOrderView extends StatefulWidget {
+class ActiveOrderView extends ConsumerStatefulWidget {
   const ActiveOrderView({super.key});
 
   @override
-  State<ActiveOrderView> createState() => _ActiveOrderViewState();
+  ConsumerState<ActiveOrderView> createState() => _ActiveOrderViewState();
 }
 
-class _ActiveOrderViewState extends State<ActiveOrderView> {
+class _ActiveOrderViewState extends ConsumerState<ActiveOrderView> {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.all(0.0),
-      children: [
-        OrderCard(
-          imageUrl:
-              "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg",
-          title: 'Dilan 1990',
-          ticketInfo: 'Ticket (1)',
-          studio: 'Studio 2',
-          date: 'Saturday, 12 Oct 2021, 13:00',
-          status: 'Success',
+    final ticketsAsyncValue = ref.watch(ticketsFetchActiveProvider);
+    return ticketsAsyncValue.when(
+      data: (tickets) {
+        if (tickets.length <= 0 || tickets.isEmpty) {
+          return Column(
+            children: [
+              Icon(
+                Icons.movie,
+                size: 80,
+                color: Color(0xFF0A1D37),
+              ),
+              SizedBox(height: 20),
+              Text(
+                "Let's watch a movie!",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Get exciting movie tickets, on the Atma Cinema',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+              SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(128, 28),
+                  backgroundColor: Color(0xFF0A1D37),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: Text(
+                  'See a movie',
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
+              ),
+            ],
+          );
+        }
+        return ListView.builder(
+          itemCount: tickets.length,
+          itemBuilder: (context, index) {
+            final ticket = tickets[index];
+            final date = ticket.payment.screening.date;
+            final formattedDate = DateFormat('yyyy-MM-dd').format(date);
+            final time = ticket.payment.screening.time;
+            final dateTimeString = "$formattedDate $time";
+            final dateTime = DateTime.parse(dateTimeString);
+            final formattedDateFinal =
+                DateFormat('EEEE, dd MMM yyyy, HH:mm').format(dateTime);
+            return OrderCard(
+              imageUrl: ticket.payment.screening.movie.cover ?? '',
+              title: ticket.payment.screening.movie.movieTitle,
+              ticketInfo: 'Ticket (1)',
+              studio: ticket.payment.screening.studio.name,
+              date: formattedDateFinal,
+              status: ticket.status,
+              ticket: ticket,
+            );
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(
+        child: Text(
+          'Failed to load tickets: $error',
+          style: const TextStyle(color: Colors.white),
+          textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 16),
-        OrderCard(
-          imageUrl:
-              "https://i.pinimg.com/736x/2a/02/14/2a021436434b66ad17e42a658ca3445b.jpg",
-          title: 'Excavator',
-          ticketInfo: 'Ticket (2)',
-          studio: 'Studio 3',
-          date: 'Sunday, 13 Oct 2021, 21:00',
-          status: 'Success',
-        ),
-        // Column(
-        //   children: [
-        //     Icon(
-        //       Icons.movie,
-        //       size: 80,
-        //       color: Color(0xFF0A1D37),
-        //     ),
-        //     SizedBox(height: 20),
-        //     Text(
-        //       "Let's watch a movie!",
-        //       style: TextStyle(
-        //         fontSize: 18,
-        //         fontWeight: FontWeight.bold,
-        //         color: Colors.black,
-        //       ),
-        //     ),
-        //     SizedBox(height: 10),
-        //     Text(
-        //       'Get exciting movie tickets, on the Atma Cinema',
-        //       textAlign: TextAlign.center,
-        //       style: TextStyle(
-        //         fontSize: 14,
-        //         color: Colors.grey,
-        //       ),
-        //     ),
-        //     SizedBox(height: 30),
-        //     ElevatedButton(
-        //       onPressed: () {},
-        //       style: ElevatedButton.styleFrom(
-        //         fixedSize: Size(128, 28),
-        //         backgroundColor: Color(0xFF0A1D37),
-        //         shape: RoundedRectangleBorder(
-        //           borderRadius: BorderRadius.circular(20),
-        //         ),
-        //       ),
-        //       child: Text(
-        //         'See a movie',
-        //         style: TextStyle(fontSize: 14, color: Colors.white),
-        //       ),
-        //     ),
-        //   ],
-        // ),
-      ],
+      ),
     );
   }
 }
@@ -88,6 +105,7 @@ class OrderCard extends StatelessWidget {
   final String studio;
   final String date;
   final String status;
+  final TicketModel ticket;
 
   const OrderCard({
     Key? key,
@@ -97,6 +115,7 @@ class OrderCard extends StatelessWidget {
     required this.studio,
     required this.date,
     required this.status,
+    required this.ticket,
   }) : super(key: key);
 
   @override
@@ -105,75 +124,86 @@ class OrderCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => TicketDetailPage()),
+          MaterialPageRoute(
+              builder: (context) => TicketDetailView(ticket: ticket)),
         );
       },
-      child: Container(
-        color: Color.fromARGB(255, 252, 252, 252),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  height: 117,
-                  width: 90,
-                ),
+      child: Column(
+        children: [
+          Container(
+            color: Color.fromARGB(255, 252, 252, 252),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 16.0, right: 16.0, bottom: 16.0, top: 16),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      height: 117,
+                      width: 90,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          ticketInfo,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          studio,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          date,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    status,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green.shade700,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      ticketInfo,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      studio,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      date,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Text(
-                status,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green.shade700,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          Divider(
+            height: 2,
+            thickness: 1,
+            color: Colors.grey.shade300,
+          )
+        ],
       ),
     );
   }

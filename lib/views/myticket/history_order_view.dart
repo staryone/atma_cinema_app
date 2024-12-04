@@ -59,37 +59,202 @@
 //   }
 // }
 
+import 'package:atma_cinema/clients/history_client.dart';
+import 'package:atma_cinema/clients/review_client.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:atma_cinema/models/history_model.dart';
+import 'package:atma_cinema/providers/history_provider.dart';
 
-class HistoryOrderView extends StatefulWidget {
+class HistoryOrderView extends ConsumerStatefulWidget {
   const HistoryOrderView({super.key});
 
   @override
-  State<HistoryOrderView> createState() => _HistoryOrderViewState();
+  ConsumerState<HistoryOrderView> createState() => _HistoryOrderViewState();
 }
 
-class _HistoryOrderViewState extends State<HistoryOrderView> {
-  Map<String, double> movieRatings = {
-    'Spiderman': 0,
-    'Marmut Merah Jambu': 0,
-  };
+class _HistoryOrderViewState extends ConsumerState<HistoryOrderView> {
+  String convertMinutesToTimeString(int minutes) {
+    final int hours = minutes ~/ 60;
+    final int remainingMinutes = minutes % 60;
 
-  @override
-  void initState() {
-    super.initState();
-    // Remove any focused widget when this screen appears
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusManager.instance.primaryFocus?.unfocus();
-    });
+    if (hours > 0 && remainingMinutes > 0) {
+      return '$hours hour${hours > 1 ? 's' : ''} $remainingMinutes minute${remainingMinutes > 1 ? 's' : ''}';
+    } else if (hours > 0) {
+      return '$hours hour${hours > 1 ? 's' : ''}';
+    } else {
+      return '$remainingMinutes minute${remainingMinutes > 1 ? 's' : ''}';
+    }
   }
 
-  void showRatingSheet(String movieTitle) {
-    double tempRating = movieRatings[movieTitle]!;
+  @override
+  Widget build(BuildContext context) {
+    final historyAsyncValue = ref.watch(historysFetchActiveProvider);
+    print(historyAsyncValue);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: historyAsyncValue.when(
+        data: (historyList) {
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            itemCount: historyList.length,
+            itemBuilder: (context, index) {
+              final history = historyList[index];
+              final movieTitle = history.payment.screening.movie.movieTitle;
+              final review = history.review;
+              final String cover = history.payment.screening.movie.cover ?? '';
+
+              return Column(
+                children: [
+                  buildMovieCard(
+                    title: movieTitle,
+                    genre: history.payment.screening.movie.genre,
+                    duration: convertMinutesToTimeString(
+                        history.payment.screening.movie.duration),
+                    director: history.payment.screening.movie.director,
+                    cover: cover,
+                    review: review,
+                    historyID: history.historyID,
+                    movieID: history.payment.screening.movie.movieID,
+                  ),
+                  Divider(height: 1, color: Colors.grey[300]),
+                ],
+              );
+            },
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text('Error: $err')),
+      ),
+    );
+  }
+
+  Widget buildMovieCard({
+    required String title,
+    required String genre,
+    required String duration,
+    required String director,
+    required String cover,
+    required dynamic review,
+    required String movieID,
+    required String historyID,
+  }) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                  height: 100,
+                  width: 70,
+                  color: Colors.grey,
+                  child: Image.network(
+                    cover,
+                  )),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text('Genre: $genre'),
+                    Text('Duration: $duration'),
+                    Text('Director: $director'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          review != null
+              ? Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'My Rating Score:',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Row(
+                            children: List.generate(5, (index) {
+                              return Icon(
+                                index < review.rating
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: Colors.amber,
+                                size: 20,
+                              );
+                            }),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            review.rating.toString(),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.amber,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              : ElevatedButton(
+                  onPressed: () => showRatingSheet(title, historyID, movieID),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0A1D37),
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    'Rate',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _refreshData() async {
+    ref.invalidate(historysFetchActiveProvider);
+  }
+
+  void showRatingSheet(String movieTitle, String historyID, String movieID) {
+    double tempRating = 0;
+    String? comment;
+    final ReviewClient reviewClient = ReviewClient();
+    final HistoryClient historyClient = HistoryClient();
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
@@ -99,19 +264,19 @@ class _HistoryOrderViewState extends State<HistoryOrderView> {
               padding: MediaQuery.of(context).viewInsets,
               child: Container(
                 height: 400,
-                padding: EdgeInsets.all(20),
-                color: Colors.white, // Background color set to white
+                padding: const EdgeInsets.all(20),
+                color: Colors.white,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
                       movieTitle,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(5, (index) {
@@ -129,7 +294,7 @@ class _HistoryOrderViewState extends State<HistoryOrderView> {
                         );
                       }),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     TextField(
                       decoration: InputDecoration(
                         labelText: 'Your Comment',
@@ -140,28 +305,67 @@ class _HistoryOrderViewState extends State<HistoryOrderView> {
                         hintText: 'Write here...',
                       ),
                       maxLines: 5,
+                      onChanged: (value) => comment = value,
                     ),
-                    Spacer(),
+                    const Spacer(),
                     ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          movieRatings[movieTitle] = tempRating;
-                        });
-                        Navigator.pop(context);
+                      onPressed: () async {
+                        if (tempRating == 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Please give a rating.')),
+                          );
+                          return;
+                        }
+
+                        try {
+                          // Simpan review menggunakan ReviewClient
+                          final reviewData = {
+                            "comment": comment ?? "",
+                            "rating": tempRating.toInt(),
+                          };
+
+                          final reviewResponse =
+                              await reviewClient.createReview(
+                            reviewData,
+                            movieID,
+                          );
+
+                          final reviewID = reviewResponse['data']['reviewID'];
+
+                          await historyClient.addReviewToHistory(
+                            {"reviewID": reviewID},
+                            historyID,
+                          );
+
+                          _refreshData();
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Review saved successfully!')),
+                          );
+
+                          // Tutup modal
+                          Navigator.pop(context);
+                        } catch (e) {
+                          // Tangani error
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: $e')),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF0A1D37),
+                        backgroundColor: const Color(0xFF0A1D37),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        minimumSize: Size(double.infinity, 50),
+                        minimumSize: const Size(double.infinity, 50),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Save',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors
-                              .white, // Save button text color set to white
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -172,155 +376,6 @@ class _HistoryOrderViewState extends State<HistoryOrderView> {
           },
         );
       },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: ListView(
-        padding: EdgeInsets.symmetric(vertical: 4), // Reduced vertical padding
-        children: [
-          buildMovieCard(
-            'Spiderman',
-            'Action',
-            '1 hour 32 minutes',
-            'Satria Mahatier',
-          ),
-          Divider(height: 1, color: Colors.grey[300]),
-          buildMovieCard(
-            'Marmut Merah Jambu',
-            'Drama, Comedy',
-            '1 hour 20 minutes',
-            'Raditya Dika',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildMovieCard(
-      String title, String genre, String duration, String director) {
-    return Container(
-      color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                height: 100,
-                width: 70,
-                color: Colors.grey,
-                child: Center(
-                  child: Text(
-                    'Poster',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-              SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: 16,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          movieRatings[title]?.toStringAsFixed(1) ?? '0.0',
-                          style: TextStyle(
-                            color: Colors.amber,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    Text('Genre: $genre'),
-                    Text('Duration: $duration'),
-                    Text('Director: $director'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12),
-          movieRatings[title]! > 0
-              ? Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'My Rating Score:',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Row(
-                            children: List.generate(5, (index) {
-                              return Icon(
-                                index < movieRatings[title]!
-                                    ? Icons.star
-                                    : Icons.star_border,
-                                color: Colors.amber,
-                                size: 20,
-                              );
-                            }),
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            movieRatings[title]!.toStringAsFixed(1),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.amber,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
-              : ElevatedButton(
-                  onPressed: () => showRatingSheet(title),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF0A1D37),
-                    minimumSize: Size(double.infinity, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Text('Rate',
-                      style: TextStyle(color: Colors.white, fontSize: 16)),
-                ),
-        ],
-      ),
     );
   }
 }

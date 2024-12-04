@@ -1,6 +1,15 @@
+import 'package:atma_cinema/models/ticket_model.dart';
+import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/views/myticket/pdf_invoice.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
-class TicketDetailPage extends StatelessWidget {
+class TicketDetailView extends StatelessWidget {
+  final TicketModel ticket;
+
+  const TicketDetailView({super.key, required this.ticket});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,9 +24,13 @@ class TicketDetailPage extends StatelessWidget {
             padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(7),
+                  topRight: Radius.circular(7),
+                ),
                 image: DecorationImage(
-                  image: AssetImage('assets/images/FnB_Food1.jpg'),
+                  image:
+                      NetworkImage(ticket.payment.screening.movie.cover ?? ''),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -27,7 +40,7 @@ class TicketDetailPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      'Excavator',
+                      ticket.payment.screening.movie.movieTitle,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -41,7 +54,6 @@ class TicketDetailPage extends StatelessWidget {
               width: double.infinity,
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Container(
@@ -56,7 +68,8 @@ class TicketDetailPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Payment ID', style: TextStyle(color: Colors.white)),
+                        Text('Payment ID',
+                            style: TextStyle(color: Colors.white)),
                         SizedBox(height: 4.0),
                         Text('Price', style: TextStyle(color: Colors.white)),
                       ],
@@ -68,13 +81,15 @@ class TicketDetailPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'PVC123YH',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ticket.payment.paymentID,
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 4.0),
                         Text(
-                          'Rp.100.000',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          'Rp' + ticket.payment.totalPayment.toString(),
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -82,19 +97,32 @@ class TicketDetailPage extends StatelessWidget {
                   Container(
                     width: 70,
                     height: 70,
-                    child: Icon(Icons.qr_code, color: Colors.white, size: 60),
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Icon(
+                        Icons.qr_code,
+                        color: Colors.white,
+                        size: 60,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-
+          CustomPaint(
+            size: const Size(400, 1),
+            painter: DashedLinePainter(),
+          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Container(
               height: 240,
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(7),
+                    bottomRight: Radius.circular(7)),
                 color: Color(0xFFEAD8B1),
               ),
               child: Column(
@@ -111,9 +139,11 @@ class TicketDetailPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Ticket ID', style: TextStyle(color: Color(0xFF8B8B89))),
+                            Text('Ticket ID',
+                                style: TextStyle(color: Color(0xFF8B8B89))),
                             SizedBox(height: 4.0),
-                            Text('TKP21345', style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(ticket.ticketID,
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -123,9 +153,11 @@ class TicketDetailPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Studio', style: TextStyle(color: Color(0xFF8B8B89))),
+                            Text('Studio',
+                                style: TextStyle(color: Color(0xFF8B8B89))),
                             SizedBox(height: 4.0),
-                            Text('3', style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(ticket.payment.screening.studio.name,
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -135,9 +167,11 @@ class TicketDetailPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Seat', style: TextStyle(color: Color(0xFF8B8B89))),
+                            Text('Seat',
+                                style: TextStyle(color: Color(0xFF8B8B89))),
                             SizedBox(height: 4.0),
-                            Text('E7, E8', style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(ticket.seatID,
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -154,9 +188,13 @@ class TicketDetailPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Date', style: TextStyle(color: Color(0xFF8B8B89))),
+                            Text('Date',
+                                style: TextStyle(color: Color(0xFF8B8B89))),
                             SizedBox(height: 4.0),
-                            Text('13 Oct 2024', style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(
+                                DateFormat('dd MMM yyyy')
+                                    .format(ticket.payment.screening.date),
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -166,9 +204,11 @@ class TicketDetailPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Time', style: TextStyle(color: Color(0xFF8B8B89))),
+                            Text('Time',
+                                style: TextStyle(color: Color(0xFF8B8B89))),
                             SizedBox(height: 4.0),
-                            Text('21:00', style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(ticket.payment.screening.time,
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -178,16 +218,20 @@ class TicketDetailPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Total Seats', style: TextStyle(color: Color(0xFF8B8B89))),
+                            Text('Total Seats',
+                                style: TextStyle(color: Color(0xFF8B8B89))),
                             SizedBox(height: 4.0),
-                            Text('Rp50.000 x 2', style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(
+                                'Rp' +
+                                    ticket.payment.screening.price.toString() +
+                                    ' x 1',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 30.0),
-
                   Center(
                     child: Text(
                       'Purchased Tickets cannot be exchanged / refund',
@@ -198,20 +242,47 @@ class TicketDetailPage extends StatelessWidget {
               ),
             ),
           ),
-
           Spacer(),
-
+          Center(
+            child: Text(
+              'Copyright Atma Cinema',
+              style: GoogleFonts.roboto(
+                textStyle: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+          ),
+          Spacer(),
           Container(
             width: double.infinity,
             // padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                createPdf(
+                    ticket.payment.user.fullName,
+                    ticket.ticketID,
+                    ticket.payment.screening.date,
+                    ticket.payment.screening.time,
+                    ticket.payment.paymentID,
+                    ticket.payment.paymentMethod,
+                    ticket.payment.paymentDate,
+                    ticket.payment.user.userID,
+                    context, [
+                  CustomRow(ticket.payment.screening.movie.movieTitle, "1",
+                      "2000", ticket.payment.totalPayment.toString()),
+                ]);
+              },
               icon: Icon(Icons.receipt_long),
               label: Text('View Invoice'),
               style: ElevatedButton.styleFrom(
+                backgroundColor: colorPrimary,
+                foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(0.0),
                 ),
               ),
             ),
@@ -220,4 +291,30 @@ class TicketDetailPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class DashedLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    const dashWidth = 10.0;
+    const dashSpace = 10.0;
+    double startX = 0;
+
+    final paint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 4
+      ..style = PaintingStyle.stroke;
+
+    while (startX < size.width) {
+      canvas.drawLine(
+        Offset(startX, 0),
+        Offset(startX + dashWidth, 0),
+        paint,
+      );
+      startX += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
