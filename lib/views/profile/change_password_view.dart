@@ -1,3 +1,4 @@
+import 'package:atma_cinema/clients/user_client.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/components/input_component.dart';
 import 'package:atma_cinema/utils/constants.dart';
@@ -22,6 +23,8 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   bool _isOldPasswordValid = true;
   bool _isNewPasswordValid = true;
   bool _isConfirmPasswordValid = true;
+  bool _isLoading = false;
+  final UserClient _userClient = UserClient();
 
   @override
   void dispose() {
@@ -89,41 +92,74 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
     );
   }
 
-  void _changePassword() {
+  void _changePassword() async {
     setState(() {
-      _isOldPasswordValid = _oldPasswordController.text.isNotEmpty;
-      _isNewPasswordValid = _newPasswordController.text.isNotEmpty;
-      _isConfirmPasswordValid = _confirmPasswordController.text.isNotEmpty;
+      _isLoading = true;
     });
 
-    if (!_isOldPasswordValid) {
-      showCustomError(context, 'Old password tidak boleh kosong');
-      return;
-    }
-    if (!_isNewPasswordValid) {
-      showCustomError(context, 'New password tidak boleh kosong');
-      return;
-    }
-    if (!_isConfirmPasswordValid) {
-      showCustomError(context, 'Confirmation password tidak boleh kosong');
-      return;
-    }
-    if (_newPasswordController.text != _confirmPasswordController.text) {
-      showCustomError(context, 'New password dan confirmation tidak sama');
+    final String oldPassword = _oldPasswordController.text;
+    final String newPassword = _newPasswordController.text;
+    final String confirmPassword = _confirmPasswordController.text;
+
+    if (newPassword != confirmPassword) {
+      _showError("New password and confirmation password do not match.");
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
 
-    if (_oldPasswordController.text != 'joko123') {
-      showCustomError(context, 'Old password salah');
-      return;
+    try {
+      final response = await _userClient.changePassword({
+        "currentPassword": oldPassword,
+        "newPassword": newPassword,
+        "newPassword_confirmation": confirmPassword,
+      });
+
+      if (response["message"] == "Password changed successfully") {
+        _showSuccessDialog();
+      } else {
+        _showError(response["message"] ?? "Failed to change password.");
+      }
+    } catch (e) {
+      _showError("An error occurred: $e");
     }
 
-    _showSuccessDialog();
-
-    _oldPasswordController.clear();
-    _newPasswordController.clear();
-    _confirmPasswordController.clear();
+    setState(() {
+      _isLoading = false;
+    });
   }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  // void _showSuccessDialog() {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: true,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text("Success"),
+  //         content: const Text("Your password has been changed."),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //               Navigator.of(context).pop(); // Close the Change Password screen
+  //             },
+  //             child: const Text("OK"),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   void toggleOldPasswordVisibility() {
     setState(() {
@@ -191,6 +227,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                     password: true,
                     onToggleVisibility: toggleOldPasswordVisibility,
                     borderColor: _isOldPasswordValid ? null : Colors.red,
+                    width: 400,
                   ),
                 ),
               ),
@@ -209,6 +246,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                     password: true,
                     onToggleVisibility: toggleNewPasswordVisibility,
                     borderColor: _isNewPasswordValid ? null : Colors.red,
+                    width: 400,
                   ),
                 ),
               ),
@@ -227,6 +265,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                     password: true,
                     onToggleVisibility: toggleConfirmPasswordVisibility,
                     borderColor: _isConfirmPasswordValid ? null : Colors.red,
+                    width: 400,
                   ),
                 ),
               ),
@@ -236,8 +275,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                   onPressed: _changePassword,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colorPrimary,
-                    minimumSize: const Size(
-                        double.infinity, 48), // Mengatur lebar tombol
+                    minimumSize: const Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

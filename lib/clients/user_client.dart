@@ -47,4 +47,13 @@ class UserClient {
       "Authorization": "Bearer $token",
     });
   }
+
+  Future<Map<String, dynamic>> changePassword(Map<String, dynamic> data) async {
+    final AuthService _auth = AuthService();
+    final String? token = await _auth.getToken();
+
+    return await _api.post("profile/change-password", data, headers: {
+      "Authorization": "Bearer $token",
+    });
+  }
 }

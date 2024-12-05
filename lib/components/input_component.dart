@@ -27,6 +27,7 @@ class InputForm extends StatefulWidget {
   final VoidCallback? onToggleVisibility;
   final VoidCallback? onTap;
   final Color? borderColor;
+  final double? width;
 
   const InputForm({
     Key? key,
@@ -41,6 +42,7 @@ class InputForm extends StatefulWidget {
     this.onToggleVisibility,
     this.borderColor,
     this.onTap,
+    this.width = 350,
   }) : super(key: key);
 
   @override
@@ -91,7 +93,7 @@ class _InputFormState extends State<InputForm> {
         children: [
           displayText(text: widget.labelTxt),
           SizedBox(
-            width: 350,
+            width: widget.width,
             height: 48.9,
             child: TextFormField(
               validator: (value) => widget.validasi(value),
