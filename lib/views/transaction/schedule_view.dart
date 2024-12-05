@@ -2,6 +2,7 @@ import 'package:atma_cinema/views/transaction/payment/confirm_payment_view.dart'
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/views/transaction/detail_schedule_view.dart';
 import 'package:video_player/video_player.dart';
+import 'package:atma_cinema/views/myticket/review_view.dart';
 
 void main() => runApp(const MovieDetailApp());
 
@@ -175,6 +176,29 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           Icon(Icons.star_half, color: Colors.yellow, size: 24),
                           Icon(Icons.star_border, color: Colors.grey, size: 24),
                         ],
+                      ),
+                      const SizedBox(height: 16),
+// "See All Reviews" section
+                      GestureDetector(
+                        onTap: () {
+                          // Navigasi ke halaman ReviewView saat "See All Reviews" ditekan
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReviewView(
+                                  movieTitle:
+                                      'Dilan 1990'), // Pastikan judul film sesuai
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'See All Reviews',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 16),
                       // Tab Section
