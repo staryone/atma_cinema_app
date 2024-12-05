@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class ReviewView extends StatelessWidget {
   final String movieTitle;
 
-  // Constructor menerima movieTitle dari halaman sebelumnya
   ReviewView({required this.movieTitle});
 
   @override
