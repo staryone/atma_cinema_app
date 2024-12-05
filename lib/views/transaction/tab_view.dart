@@ -21,17 +21,11 @@ class _MovieTabPageState extends State<MovieTabPage> {
   int? selected2DTimeIndex;
   int? selected3DTimeIndex;
 
-  final List<Map<String, String>> dates = [
-    {'day': '12', 'label': 'Today'},
-    {'day': '13', 'label': 'Sun'},
-    {'day': '14', 'label': 'Mon'},
-    {'day': '15', 'label': 'Tue'},
-  ];
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
+      initialIndex: 1,
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
@@ -65,7 +59,6 @@ class _MovieTabPageState extends State<MovieTabPage> {
                       movie: widget.dataMovie,
                     ),
                     DetailScheduleView(
-                      dates: dates,
                       selectedIndex: selectedIndex,
                       onDateSelected: (index) {
                         setState(() {
@@ -84,6 +77,7 @@ class _MovieTabPageState extends State<MovieTabPage> {
                           selected3DTimeIndex = index;
                         });
                       },
+                      movieID: widget.dataMovie.movieID,
                     ),
                   ],
                 ),
