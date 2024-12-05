@@ -1,69 +1,8 @@
-// import 'package:flutter/material.dart';
-
-// class HistoryOrderView extends StatefulWidget {
-//   const HistoryOrderView({super.key});
-
-//   @override
-//   State<HistoryOrderView> createState() => _HistoryOrderViewState();
-// }
-
-// class _HistoryOrderViewState extends State<HistoryOrderView> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListView(
-//       children: [
-//         Column(
-//           children: [
-//             Icon(
-//               Icons.movie,
-//               size: 80,
-//               color: Color(0xFF0A1D37),
-//             ),
-//             SizedBox(height: 20),
-//             Text(
-//               "Oops, History not Found!",
-//               style: TextStyle(
-//                 fontSize: 18,
-//                 fontWeight: FontWeight.bold,
-//                 color: Colors.black,
-//               ),
-//             ),
-//             SizedBox(height: 10),
-//             Text(
-//               'Get exciting movie tickets, on the Atma Cinema',
-//               textAlign: TextAlign.center,
-//               style: TextStyle(
-//                 fontSize: 14,
-//                 color: Colors.grey,
-//               ),
-//             ),
-//             SizedBox(height: 30),
-//             ElevatedButton(
-//               onPressed: () {},
-//               style: ElevatedButton.styleFrom(
-//                 fixedSize: Size(128, 28),
-//                 backgroundColor: Color(0xFF0A1D37),
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(20),
-//                 ),
-//               ),
-//               child: Text(
-//                 'See a movie',
-//                 style: TextStyle(fontSize: 14, color: Colors.white),
-//               ),
-//             ),
-//           ],
-//         )
-//       ],
-//     );
-//   }
-// }
-
 import 'package:atma_cinema/clients/history_client.dart';
 import 'package:atma_cinema/clients/review_client.dart';
+import 'package:atma_cinema/utils/time_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:atma_cinema/models/history_model.dart';
 import 'package:atma_cinema/providers/history_provider.dart';
 
 class HistoryOrderView extends ConsumerStatefulWidget {
@@ -74,28 +13,62 @@ class HistoryOrderView extends ConsumerStatefulWidget {
 }
 
 class _HistoryOrderViewState extends ConsumerState<HistoryOrderView> {
-  String convertMinutesToTimeString(int minutes) {
-    final int hours = minutes ~/ 60;
-    final int remainingMinutes = minutes % 60;
-
-    if (hours > 0 && remainingMinutes > 0) {
-      return '$hours hour${hours > 1 ? 's' : ''} $remainingMinutes minute${remainingMinutes > 1 ? 's' : ''}';
-    } else if (hours > 0) {
-      return '$hours hour${hours > 1 ? 's' : ''}';
-    } else {
-      return '$remainingMinutes minute${remainingMinutes > 1 ? 's' : ''}';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final historyAsyncValue = ref.watch(historysFetchActiveProvider);
-    print(historyAsyncValue);
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: historyAsyncValue.when(
         data: (historyList) {
+          if (historyList.isEmpty) {
+            return ListView(
+              children: [
+                Column(
+                  children: [
+                    Icon(
+                      Icons.movie,
+                      size: 80,
+                      color: Color(0xFF0A1D37),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      "Oops, History not Found!",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Get exciting movie tickets, on the Atma Cinema',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(128, 28),
+                        backgroundColor: Color(0xFF0A1D37),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text(
+                        'See a movie',
+                        style: TextStyle(fontSize: 14, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            );
+          }
           return ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: 4),
             itemCount: historyList.length,
@@ -319,7 +292,6 @@ class _HistoryOrderViewState extends ConsumerState<HistoryOrderView> {
                         }
 
                         try {
-                          // Simpan review menggunakan ReviewClient
                           final reviewData = {
                             "comment": comment ?? "",
                             "rating": tempRating.toInt(),

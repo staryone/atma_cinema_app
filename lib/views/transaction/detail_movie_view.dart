@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class PrivacyView extends StatelessWidget {
-  const PrivacyView({super.key});
+class DetailMovieView extends StatelessWidget {
+  const DetailMovieView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final List<String> castImages = [
-      "images/download.jpeg",
-      "images/download.jpeg",
-      "images/download.jpeg",
-      "images/download.jpeg",
-      "images/download.jpeg",
-      "images/download.jpeg",
+      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
     ];
 
     return Scaffold(
@@ -96,7 +96,7 @@ class PrivacyView extends StatelessWidget {
                       height: 100,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage(castImages[index]),
+                          image: NetworkImage(castImages[index]),
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.circular(15),

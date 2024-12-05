@@ -222,7 +222,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       Expanded(
                         child: selectedTab == "About Movie"
                             ? const AboutMovieContent()
-                            : const ScheduleTabView(),
+                            : const AboutMovieContent(),
                       ),
                     ],
                   ),

@@ -1,130 +1,176 @@
 import 'package:flutter/material.dart';
 
-class ScheduleTabView extends StatelessWidget {
-  const ScheduleTabView({Key? key}) : super(key: key);
+class DetailScheduleView extends StatefulWidget {
+  final List<Map<String, String>> dates;
+  final int selectedIndex;
+  final ValueChanged<int> onDateSelected;
+  final int? selected2DTimeIndex;
+  final int? selected3DTimeIndex;
+  final ValueChanged<int?> on2DTimeSelected;
+  final ValueChanged<int?> on3DTimeSelected;
+
+  const DetailScheduleView({
+    Key? key,
+    required this.dates,
+    required this.selectedIndex,
+    required this.onDateSelected,
+    this.selected2DTimeIndex,
+    this.selected3DTimeIndex,
+    required this.on2DTimeSelected,
+    required this.on3DTimeSelected,
+  }) : super(key: key);
+
+  @override
+  State<DetailScheduleView> createState() => _DetailScheduleViewState();
+}
+
+class _DetailScheduleViewState extends State<DetailScheduleView> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(widget.dates.length, (index) {
+                final isSelected = index == widget.selectedIndex;
+                return GestureDetector(
+                  onTap: () {
+                    widget.onDateSelected(index);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Theme.of(context).primaryColor
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          widget.dates[index]['day']!,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          widget.dates[index]['label']!,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(height: 8),
+            ScheduleSection(
+              title: 'Reguler 2D',
+              price: 'Rp 45.000',
+              times: ['13.00', '15.00', '17.00', '19.00', '21.00'],
+              selectedIndex: widget.selected2DTimeIndex,
+              onTimeSelected: widget.on2DTimeSelected,
+            ),
+            const SizedBox(height: 16),
+            ScheduleSection(
+              title: 'Reguler 3D',
+              price: 'Rp 40.000',
+              times: ['13.00', '15.00', '17.00', '19.00', '21.00'],
+              selectedIndex: widget.selected3DTimeIndex,
+              onTimeSelected: widget.on3DTimeSelected,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ScheduleSection extends StatelessWidget {
+  final String title;
+  final String price;
+  final List<String> times;
+  final int? selectedIndex;
+  final ValueChanged<int?> onTimeSelected;
+
+  const ScheduleSection({
+    Key? key,
+    required this.title,
+    required this.price,
+    required this.times,
+    this.selectedIndex,
+    required this.onTimeSelected,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Date Tabs Section
-        Container(
-          height: 50,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildDateTab("12", "Today", isSelected: true),
-              _buildDateTab("13", "Sun"),
-              _buildDateTab("14", "Mon"),
-              _buildDateTab("15", "Tue"),
-            ],
-          ),
-        ),
-        const Divider(),
-        // Schedule Details
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              _buildScheduleSection(
-                title: "Regular 2D",
-                price: "Rp 45.000",
-                times: ["13.00", "15.00", "17.00", "19.00", "21.00"],
-              ),
-              const SizedBox(height: 16),
-              _buildScheduleSection(
-                title: "Regular 3D",
-                price: "Rp 40.000",
-                times: ["13.00", "15.00", "17.00", "19.00", "21.00"],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Widget for building individual schedule sections
-  Widget _buildScheduleSection({
-    required String title,
-    required String price,
-    required List<String> times,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "$title: $price",
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: times.map((time) {
-              return _buildTimeButton(time);
-            }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Widget for building time buttons
-  Widget _buildTimeButton(String time) {
-    return OutlinedButton(
-      onPressed: () {},
-      style: OutlinedButton.styleFrom(
-        foregroundColor: Colors.black,
-        side: const BorderSide(color: Colors.blue),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        backgroundColor: time == "13.00" ? Colors.blue : Colors.white,
-      ),
-      child: Text(
-        time,
-        style: TextStyle(
-          color: time == "13.00" ? Colors.white : Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  // Widget for building individual date tabs
-  Widget _buildDateTab(String day, String label, {bool isSelected = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? Colors.blue : Colors.white,
-          foregroundColor: isSelected ? Colors.white : Colors.black,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: BorderSide(
-              color: isSelected ? Colors.blue : Colors.grey,
-            ),
-          ),
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 247, 247, 247),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              day,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              '$title: $price',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 12),
+            const SizedBox(height: 12),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 2.5,
+              ),
+              itemCount: times.length,
+              itemBuilder: (context, index) {
+                final time = times[index];
+                final isSelected = index == selectedIndex;
+                return OutlinedButton(
+                  onPressed: () => onTimeSelected(index),
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: isSelected
+                        ? Theme.of(context).primaryColor
+                        : Colors.transparent,
+                    side: const BorderSide(
+                      color: Color.fromARGB(255, 150, 150, 150),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                  child: Text(
+                    time,
+                    style: TextStyle(
+                      color: isSelected
+                          ? Colors.white
+                          : Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
