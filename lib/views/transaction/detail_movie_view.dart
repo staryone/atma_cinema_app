@@ -1,19 +1,28 @@
+import 'package:atma_cinema/models/movie_model.dart';
 import 'package:flutter/material.dart';
 
-class DetailMovieView extends StatelessWidget {
-  const DetailMovieView({super.key});
+class DetailMovieView extends StatefulWidget {
+  final MovieModel movie;
+
+  const DetailMovieView({super.key, required this.movie});
+
+  @override
+  State<DetailMovieView> createState() => _DetailMovieViewState();
+}
+
+class _DetailMovieViewState extends State<DetailMovieView> {
+  // List of cast images
+  final List<String> castImages = [
+    "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+    "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+    "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+    "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+    "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+    "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final List<String> castImages = [
-      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
-      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
-      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
-      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
-      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
-      "https://image.tmdb.org/t/p/w500/ycZpLjHxsNPvsB6ndu2D9qsx94X.jpg",
-    ];
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -21,17 +30,17 @@ class DetailMovieView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Dilan 1990",
-              style: TextStyle(
+            Text(
+              widget.movie.movieTitle,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Roboto',
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              "Dilan 1990 is a romantic drama film adapted from a novel by Pidi Baiq. Set in Bandung in 1990, the film tells the love story of two teenagers, Dilan, a charismatic high school student, and Milea, a transfer student from Jakarta. Starring Iqbaal Ramadhan and Vanesha Prescilla, the film captivated audiences with its light, romantic, and nostalgic dialogue.",
+            Text(
+              widget.movie.synopsis ?? '',
               style: TextStyle(fontSize: 14, fontFamily: 'Roboto'),
             ),
             const SizedBox(height: 16),
@@ -43,8 +52,8 @@ class DetailMovieView extends StatelessWidget {
                 fontFamily: 'Roboto',
               ),
             ),
-            const Text(
-              "Ody Mulya Hidayat",
+            Text(
+              widget.movie.director,
               style: TextStyle(fontSize: 14, fontFamily: 'Roboto'),
             ),
             const SizedBox(height: 8),
@@ -56,8 +65,8 @@ class DetailMovieView extends StatelessWidget {
                 fontFamily: 'Roboto',
               ),
             ),
-            const Text(
-              "Fajar Bustomi, Pidi Baiq",
+            Text(
+              widget.movie.director,
               style: TextStyle(fontSize: 14, fontFamily: 'Roboto'),
             ),
             const SizedBox(height: 8),
@@ -69,8 +78,8 @@ class DetailMovieView extends StatelessWidget {
                 fontFamily: 'Roboto',
               ),
             ),
-            const Text(
-              "Pidi Baiq, Titien Wattimena",
+            Text(
+              widget.movie.writers ?? '',
               style: TextStyle(fontSize: 14, fontFamily: 'Roboto'),
             ),
             const SizedBox(height: 16),

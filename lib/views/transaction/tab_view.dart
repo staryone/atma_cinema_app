@@ -1,16 +1,22 @@
+import 'package:atma_cinema/models/movie_model.dart';
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/utils/time_utils.dart';
 import 'package:atma_cinema/views/transaction/movie_header.dart';
 import 'package:atma_cinema/views/transaction/seat_view.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/views/transaction/detail_movie_view.dart';
 import 'package:atma_cinema/views/transaction/detail_schedule_view.dart';
 
-class MovieTestPage extends StatefulWidget {
+class MovieTabPage extends StatefulWidget {
+  final MovieModel dataMovie;
+
+  const MovieTabPage({super.key, required this.dataMovie});
+
   @override
-  _MovieTestPageState createState() => _MovieTestPageState();
+  _MovieTabPageState createState() => _MovieTabPageState();
 }
 
-class _MovieTestPageState extends State<MovieTestPage> {
+class _MovieTabPageState extends State<MovieTabPage> {
   int selectedIndex = 0;
   int? selected2DTimeIndex;
   int? selected3DTimeIndex;
@@ -32,15 +38,13 @@ class _MovieTestPageState extends State<MovieTestPage> {
           child: Column(
             children: [
               MovieHeader(
-                title: 'Dilan 1990',
-                genre: 'Drama, Romance',
-                duration: '1 hour 20 minutes',
-                director: 'Fajar Bustomi',
+                title: widget.dataMovie.movieTitle,
+                genre: widget.dataMovie.genre,
+                duration: convertMinutesToTimeString(widget.dataMovie.duration),
+                director: widget.dataMovie.director,
                 rating: 3.5,
-                backgroundImageUrl:
-                    'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg',
-                posterImageUrl:
-                    'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg',
+                backgroundImageUrl: widget.dataMovie.cover ?? '',
+                posterImageUrl: widget.dataMovie.cover ?? '',
               ),
               const SizedBox(height: 20),
               TabBar(
@@ -57,7 +61,9 @@ class _MovieTestPageState extends State<MovieTestPage> {
                 height: 500,
                 child: TabBarView(
                   children: [
-                    DetailMovieView(),
+                    DetailMovieView(
+                      movie: widget.dataMovie,
+                    ),
                     DetailScheduleView(
                       dates: dates,
                       selectedIndex: selectedIndex,
