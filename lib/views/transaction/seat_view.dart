@@ -1,28 +1,36 @@
+import 'dart:convert';
+
 import 'package:atma_cinema/components/screen_area_component.dart';
+import 'package:atma_cinema/models/screening_model.dart';
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/views/transaction/payment/confirm_payment_view.dart';
+import 'package:atma_cinema/views/transaction/payment/payment_view.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SeatSelectionScreen extends StatefulWidget {
-  const SeatSelectionScreen({Key? key}) : super(key: key);
+  final ScreeningModel screening;
+  const SeatSelectionScreen({super.key, required this.screening});
   @override
   _SeatSelectionScreenState createState() => _SeatSelectionScreenState();
 }
 
 class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
-  List<Map<String, dynamic>> seatData = [
-    {'id': 'A10', 'status': 'available'},
-    {'id': 'A11', 'status': 'available'},
-    {'id': 'A12', 'status': 'booked'},
-    {'id': 'A13', 'status': 'available'},
-    {'id': 'A14', 'status': 'available'},
-    {'id': 'B10', 'status': 'available'},
-    {'id': 'B11', 'status': 'booked'},
-    {'id': 'B12', 'status': 'booked'},
-    {'id': 'B13', 'status': 'available'},
-    {'id': 'B14', 'status': 'available'},
-    {'id': 'B15', 'status': 'available'},
-    {'id': 'B16', 'status': 'available'},
-  ];
+  late List<Map<String, dynamic>> seatData;
+  late String formattedDate;
+  late String formattedTime;
+
+  @override
+  void initState() {
+    super.initState();
+    seatData = widget.screening.seatLayout.entries
+        .map((entry) => {'id': entry.key, 'status': entry.value})
+        .toList();
+    formattedDate = DateFormat('EEE, dd.MM.yyyy').format(widget.screening.date);
+
+    DateTime fullTime = DateTime.parse("2024-12-08 ${widget.screening.time}");
+    formattedTime = DateFormat('HH.mm').format(fullTime);
+  }
 
   List<String> selectedSeats = [];
 
@@ -40,8 +48,9 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Sat, 12.10.2021 | ', style: TextStyle(fontSize: 14)),
-                Text('13.00 | Reguler', style: TextStyle(fontSize: 14)),
+                Text('$formattedDate | ', style: TextStyle(fontSize: 14)),
+                Text('$formattedTime | ${widget.screening.studio.name}',
+                    style: TextStyle(fontSize: 14)),
               ],
             )
           ],
@@ -101,7 +110,12 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                                         if (isSelected) {
                                           selectedSeats.remove(seat['id']);
                                         } else {
-                                          selectedSeats.add(seat['id']);
+                                          if (selectedSeats.length >= 3) {
+                                            showOverlayWarning(context,
+                                                'You can only pick up to 3 seats.');
+                                          } else {
+                                            selectedSeats.add(seat['id']);
+                                          }
                                         }
                                       });
                                     }
@@ -169,7 +183,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                       style: const TextStyle(color: Colors.white),
                     ),
                     Text(
-                      'Rp ${selectedSeats.length * 45000}',
+                      'Rp ${selectedSeats.length * widget.screening.price}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -200,21 +214,27 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
                       ),
                       onPressed: selectedSeats.isNotEmpty
                           ? () {
-                              showDialog(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                  title: const Text('Booking Confirmed'),
-                                  content: Text(
-                                      'You have selected: ${selectedSeats.join(', ')}'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ConfirmPaymentPage(),
                                 ),
                               );
+                              // showDialog(
+                              //   context: context,
+                              //   builder: (_) => AlertDialog(
+                              //     title: const Text('Booking Confirmed'),
+                              //     content: Text(
+                              //         'You have selected: ${selectedSeats.join(', ')}'),
+                              //     actions: [
+                              //       TextButton(
+                              //         onPressed: () =>
+                              //             Navigator.of(context).pop(),
+                              //         child: const Text('OK'),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // );
                             }
                           : null,
                       child: const Text('Continue'),
@@ -227,6 +247,38 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
         ],
       ),
     );
+  }
+
+  void showOverlayWarning(BuildContext context, String message) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: 50,
+        left: MediaQuery.of(context).size.width * 0.1,
+        right: MediaQuery.of(context).size.width * 0.1,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+
+    Future.delayed(const Duration(seconds: 2), () {
+      overlayEntry.remove();
+    });
   }
 
   Widget _buildLegendItem(Color color, String label) {

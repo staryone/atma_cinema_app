@@ -1,4 +1,5 @@
 import 'package:atma_cinema/models/movie_model.dart';
+import 'package:atma_cinema/models/screening_model.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/utils/time_utils.dart';
 import 'package:atma_cinema/views/transaction/movie_header.dart';
@@ -18,9 +19,8 @@ class MovieTabPage extends StatefulWidget {
 
 class _MovieTabPageState extends State<MovieTabPage>
     with SingleTickerProviderStateMixin {
-  int selectedIndex = 0;
-  int? selected2DTimeIndex;
-  int? selected3DTimeIndex;
+  int selectedDateIndex = 0;
+  ScreeningModel? selectedScreening;
   late TabController _tabController;
 
   @override
@@ -48,7 +48,7 @@ class _MovieTabPageState extends State<MovieTabPage>
             return [
               SliverAppBar(
                 backgroundColor: Colors.white,
-                expandedHeight: 400.0,
+                expandedHeight: 420.0,
                 pinned: true,
                 floating: false,
                 flexibleSpace: FlexibleSpaceBar(
@@ -86,22 +86,17 @@ class _MovieTabPageState extends State<MovieTabPage>
               ),
               // Schedule Tab
               DetailScheduleView(
-                selectedIndex: selectedIndex,
+                selectedDateIndex: selectedDateIndex,
                 onDateSelected: (index) {
                   setState(() {
-                    selectedIndex = index;
+                    selectedDateIndex = index;
+                    selectedScreening = null;
                   });
                 },
-                selected2DTimeIndex: selected2DTimeIndex,
-                selected3DTimeIndex: selected3DTimeIndex,
-                on2DTimeSelected: (index) {
+                selectedScreening: selectedScreening,
+                onScreeningSelected: (screening) {
                   setState(() {
-                    selected2DTimeIndex = index;
-                  });
-                },
-                on3DTimeSelected: (index) {
-                  setState(() {
-                    selected3DTimeIndex = index;
+                    selectedScreening = screening;
                   });
                 },
                 movieID: widget.dataMovie.movieID,
@@ -109,27 +104,31 @@ class _MovieTabPageState extends State<MovieTabPage>
             ],
           ),
         ),
-        bottomNavigationBar: Container(
-          width: double.infinity,
-          height: 70,
-          padding: const EdgeInsets.all(16),
-          color: colorPrimary,
-          child: TextButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SeatSelectionScreen(),
+        bottomNavigationBar: selectedScreening != null
+            ? Container(
+                width: double.infinity,
+                height: 70,
+                padding: const EdgeInsets.all(16),
+                color: colorPrimary,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SeatSelectionScreen(
+                          screening: selectedScreening!,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.local_movies, color: Colors.white),
+                  label: const Text(
+                    'Buy Ticket',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
                 ),
-              );
-            },
-            icon: const Icon(Icons.local_movies, color: Colors.white),
-            label: const Text(
-              'Buy Ticket',
-              style: TextStyle(color: Colors.white, fontSize: 18),
-            ),
-          ),
-        ),
+              )
+            : null,
       ),
     );
   }

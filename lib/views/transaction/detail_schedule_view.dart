@@ -1,25 +1,23 @@
+import 'package:atma_cinema/models/screening_model.dart';
+import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:atma_cinema/providers/screening_provider.dart';
 
 class DetailScheduleView extends ConsumerStatefulWidget {
-  final int selectedIndex;
+  final int selectedDateIndex;
   final ValueChanged<int> onDateSelected;
-  final int? selected2DTimeIndex;
-  final int? selected3DTimeIndex;
-  final ValueChanged<int?> on2DTimeSelected;
-  final ValueChanged<int?> on3DTimeSelected;
+  final ScreeningModel? selectedScreening;
+  final ValueChanged<ScreeningModel?> onScreeningSelected;
   final String movieID;
 
   const DetailScheduleView({
     Key? key,
-    required this.selectedIndex,
+    required this.selectedDateIndex,
     required this.onDateSelected,
-    this.selected2DTimeIndex,
-    this.selected3DTimeIndex,
-    required this.on2DTimeSelected,
-    required this.on3DTimeSelected,
+    this.selectedScreening,
+    required this.onScreeningSelected,
     required this.movieID,
   }) : super(key: key);
 
@@ -49,6 +47,7 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
         'day': DateFormat('d').format(date),
         'label': i == 0 ? 'Today' : DateFormat('EEE').format(date),
         'date': DateFormat('yyyy-MM-dd').format(date),
+        'time': DateFormat('HH:mm:ss').format(DateTime.now()),
       });
     }
 
@@ -65,59 +64,66 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
           // Date Selector
           SizedBox(
             height: 70,
-            child: ListView(
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              children: List.generate(dates.length, (index) {
-                final isSelected = index == widget.selectedIndex;
+              itemCount: dates.length,
+              itemBuilder: (context, index) {
+                final isSelected = index == widget.selectedDateIndex;
                 final isToday = index == 0;
                 return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   width: 80,
                   child: GestureDetector(
-                    onTap: () {
-                      widget.onDateSelected(index);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Theme.of(context).primaryColor
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: isToday
+                    onTap: isToday
+                        ? () {
+                            widget.onDateSelected(index);
+                          }
+                        : null,
+                    child: Opacity(
+                      opacity: isToday ? 1.0 : 0.5,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: isSelected
                               ? Theme.of(context).primaryColor
-                              : Colors.grey.shade400,
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isToday
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey.shade400,
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            dates[index]['day']!,
-                            style: TextStyle(
-                              color: isToday
-                                  ? (isSelected ? Colors.white : Colors.black)
-                                  : Colors.grey,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              dates[index]['day']!,
+                              style: TextStyle(
+                                color: isToday
+                                    ? (isSelected ? Colors.white : Colors.black)
+                                    : Colors.grey,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            dates[index]['label']!,
-                            style: TextStyle(
-                              color: isToday
-                                  ? (isSelected ? Colors.white : Colors.black)
-                                  : Colors.grey,
-                              fontSize: 14,
+                            Text(
+                              dates[index]['label']!,
+                              style: TextStyle(
+                                color: isToday
+                                    ? (isSelected ? Colors.white : Colors.black)
+                                    : Colors.grey,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 );
-              }),
+              },
             ),
           ),
           const SizedBox(height: 16),
@@ -129,76 +135,61 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
                     ref.watch(screeningsFetchByMovieProvider);
                 return screeningsAsyncValue.when(
                   data: (screenings) {
-                    final availableTimes = screenings
+                    // Filter screenings by selected date
+                    final selectedDate =
+                        dates[widget.selectedDateIndex]['date'];
+                    final selectedTime = DateFormat('HH:mm:ss')
+                        .parse(dates[widget.selectedDateIndex]['time'] ?? '');
+                    // screenings.map((screening) => print(screening));
+                    final filteredScreenings = screenings
                         .where((screening) =>
                             screening.date ==
-                            dates[widget.selectedIndex]['date'])
-                        .map((screening) => screening.time)
-                        .toSet();
+                                DateTime.parse(selectedDate ?? '') &&
+                            selectedTime.isBefore(
+                                DateFormat('HH:mm:ss').parse(screening.time)))
+                        .toList();
+                    // print(filteredScreenings);
+
+                    // Group screenings by studio
+                    final Map<String, List<ScreeningModel>> screeningsByStudio =
+                        {};
+                    for (var screening in filteredScreenings) {
+                      screeningsByStudio
+                          .putIfAbsent(screening.studio.name, () => [])
+                          .add(screening);
+                    }
+
+                    List<Widget> scheduleSections = [];
+                    for (String studioName in [
+                      'Reguler 2D',
+                      'Reguler 3D',
+                      'Premier 2D',
+                      'Premier 3D'
+                    ]) {
+                      final screeningsList =
+                          screeningsByStudio[studioName] ?? [];
+                      if (screeningsList.isNotEmpty) {
+                        scheduleSections.add(
+                          ScheduleSection(
+                            title: studioName,
+                            price: getPriceForStudio(studioName),
+                            screenings: screeningsList,
+                            selectedScreening: widget.selectedScreening,
+                            onTimeSelected: (screening) {
+                              widget.onScreeningSelected(screening);
+                            },
+                            color: studioName.startsWith('Premier')
+                                ? const Color(0xFFF3E9D3)
+                                : const Color.fromARGB(255, 239, 238, 238),
+                          ),
+                        );
+                        scheduleSections.add(const SizedBox(height: 16));
+                      }
+                    }
 
                     return SingleChildScrollView(
                       child: Column(
-                        children: [
-                          ScheduleSection(
-                            title: 'Reguler 2D',
-                            price: 'Rp 40.000',
-                            times: [
-                              '13.00',
-                              '15.00',
-                              '17.00',
-                              '19.00',
-                              '21.00'
-                            ],
-                            selectedIndex: widget.selected2DTimeIndex,
-                            onTimeSelected: widget.on2DTimeSelected,
-                            availableTimes: availableTimes,
-                          ),
-                          const SizedBox(height: 16),
-                          ScheduleSection(
-                            title: 'Reguler 3D',
-                            price: 'Rp 45.000',
-                            times: [
-                              '13.00',
-                              '15.00',
-                              '17.00',
-                              '19.00',
-                              '21.00'
-                            ],
-                            selectedIndex: widget.selected2DTimeIndex,
-                            onTimeSelected: widget.on2DTimeSelected,
-                            availableTimes: availableTimes,
-                          ),
-                          const SizedBox(height: 16),
-                          ScheduleSection(
-                            title: 'Premier 2D',
-                            price: 'Rp 70.000',
-                            times: [
-                              '13.00',
-                              '15.00',
-                              '17.00',
-                              '19.00',
-                              '21.00'
-                            ],
-                            selectedIndex: widget.selected2DTimeIndex,
-                            onTimeSelected: widget.on2DTimeSelected,
-                            availableTimes: availableTimes,
-                          ),
-                          const SizedBox(height: 16),
-                          ScheduleSection(
-                            title: 'Premier 3D',
-                            price: 'Rp 80.000',
-                            times: [
-                              '13.00',
-                              '15.00',
-                              '17.00',
-                              '19.00',
-                              '21.00'
-                            ],
-                            selectedIndex: widget.selected3DTimeIndex,
-                            onTimeSelected: widget.on3DTimeSelected,
-                            availableTimes: availableTimes,
-                          ),
-                        ],
+                        children: scheduleSections,
                       ),
                     );
                   },
@@ -213,33 +204,47 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
       ),
     );
   }
+
+  String getPriceForStudio(String studioName) {
+    switch (studioName) {
+      case 'Reguler 2D':
+        return 'Rp 40.000';
+      case 'Reguler 3D':
+        return 'Rp 45.000';
+      case 'Premier 2D':
+        return 'Rp 70.000';
+      case 'Premier 3D':
+        return 'Rp 80.000';
+      default:
+        return '';
+    }
+  }
 }
 
 class ScheduleSection extends StatelessWidget {
   final String title;
   final String price;
-  final List<String> times;
-  final int? selectedIndex;
-  final ValueChanged<int?> onTimeSelected;
-  final Set<String> availableTimes;
+  final List<ScreeningModel> screenings;
+  final ScreeningModel? selectedScreening;
+  final ValueChanged<ScreeningModel?> onTimeSelected;
+  final Color color;
 
   const ScheduleSection({
     Key? key,
     required this.title,
     required this.price,
-    required this.times,
-    this.selectedIndex,
+    required this.screenings,
+    this.selectedScreening,
     required this.onTimeSelected,
-    required this.availableTimes,
+    this.color = const Color.fromARGB(255, 239, 238, 238),
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Removed fixed height to allow dynamic sizing
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 247, 247, 247),
+        color: color,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -253,41 +258,29 @@ class ScheduleSection extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
           ),
-          const SizedBox(height: 12),
           GridView.builder(
             shrinkWrap: true,
-            physics:
-                const NeverScrollableScrollPhysics(), // Disable internal scrolling
+            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
               childAspectRatio: 2.5,
             ),
-            itemCount: times.length,
+            itemCount: screenings.length,
             itemBuilder: (context, index) {
-              final formattedTimes = times.map((time) {
-                final parts = time.split('.');
-                final hours = parts[0].padLeft(2, '0');
-                final minutes = parts[1].padRight(2, '0');
-                return '$hours:$minutes:00';
-              }).toList();
-              final time = formattedTimes[index];
-              final isAvailable = availableTimes.contains(time);
-              final isSelected = index == selectedIndex;
+              final screening = screenings[index];
+              final time = screening.time.substring(0, 5);
+              final isSelected = screening == selectedScreening;
 
               return OutlinedButton(
-                onPressed: isAvailable ? () => onTimeSelected(index) : null,
+                onPressed: () => onTimeSelected(screening),
                 style: OutlinedButton.styleFrom(
                   backgroundColor: isSelected
                       ? Theme.of(context).primaryColor
                       : Colors.transparent,
                   side: BorderSide(
-                    color: isAvailable
-                        ? (isSelected
-                            ? Theme.of(context).primaryColor
-                            : const Color.fromARGB(255, 150, 150, 150))
-                        : Colors.grey,
+                    color: Theme.of(context).primaryColor,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -297,11 +290,9 @@ class ScheduleSection extends StatelessWidget {
                 child: Text(
                   time,
                   style: TextStyle(
-                    color: isAvailable
-                        ? (isSelected
-                            ? Colors.white
-                            : Theme.of(context).primaryColor)
-                        : Colors.grey,
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
