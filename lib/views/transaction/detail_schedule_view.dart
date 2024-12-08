@@ -12,16 +12,16 @@ class DetailScheduleView extends ConsumerStatefulWidget {
   final ValueChanged<int?> on3DTimeSelected;
   final String movieID;
 
-  const DetailScheduleView(
-      {Key? key,
-      required this.selectedIndex,
-      required this.onDateSelected,
-      this.selected2DTimeIndex,
-      this.selected3DTimeIndex,
-      required this.on2DTimeSelected,
-      required this.on3DTimeSelected,
-      required this.movieID})
-      : super(key: key);
+  const DetailScheduleView({
+    Key? key,
+    required this.selectedIndex,
+    required this.onDateSelected,
+    this.selected2DTimeIndex,
+    this.selected3DTimeIndex,
+    required this.on2DTimeSelected,
+    required this.on3DTimeSelected,
+    required this.movieID,
+  }) : super(key: key);
 
   @override
   ConsumerState<DetailScheduleView> createState() => _DetailScheduleViewState();
@@ -57,12 +57,12 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
 
   @override
   Widget build(BuildContext context) {
-    // ref.read(movieIDProvider.notifier).state = widget.movieID;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Date Selector
           SizedBox(
             height: 70,
             child: ListView(
@@ -74,11 +74,9 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   width: 80,
                   child: GestureDetector(
-                    onTap: isToday
-                        ? () {
-                            widget.onDateSelected(index);
-                          }
-                        : null,
+                    onTap: () {
+                      widget.onDateSelected(index);
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 12),
@@ -123,59 +121,94 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
             ),
           ),
           const SizedBox(height: 16),
-          // Jadwal 2D
-          Consumer(
-            builder: (context, ref, child) {
-              final screeningsAsyncValue =
-                  ref.watch(screeningsFetchByMovieProvider);
-              return screeningsAsyncValue.when(
-                data: (screenings) {
-                  final availableTimes = screenings
-                      // .where((screening) =>
-                      //     screening.date ==
-                      //     dates[widget.selectedIndex]['date'])
-                      .map((screening) => screening.time)
-                      .toSet();
+          // Schedule Sections
+          Expanded(
+            child: Consumer(
+              builder: (context, ref, child) {
+                final screeningsAsyncValue =
+                    ref.watch(screeningsFetchByMovieProvider);
+                return screeningsAsyncValue.when(
+                  data: (screenings) {
+                    final availableTimes = screenings
+                        .where((screening) =>
+                            screening.date ==
+                            dates[widget.selectedIndex]['date'])
+                        .map((screening) => screening.time)
+                        .toSet();
 
-                  return Column(
-                    children: [
-                      ScheduleSection(
-                        title: 'Reguler 2D',
-                        price: 'Rp 45.000',
-                        times: ['13.00', '15.00', '17.00', '19.00', '21.00'],
-                        selectedIndex: widget.selected2DTimeIndex,
-                        onTimeSelected: widget.on2DTimeSelected,
-                        availableTimes: availableTimes,
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          ScheduleSection(
+                            title: 'Reguler 2D',
+                            price: 'Rp 40.000',
+                            times: [
+                              '13.00',
+                              '15.00',
+                              '17.00',
+                              '19.00',
+                              '21.00'
+                            ],
+                            selectedIndex: widget.selected2DTimeIndex,
+                            onTimeSelected: widget.on2DTimeSelected,
+                            availableTimes: availableTimes,
+                          ),
+                          const SizedBox(height: 16),
+                          ScheduleSection(
+                            title: 'Reguler 3D',
+                            price: 'Rp 45.000',
+                            times: [
+                              '13.00',
+                              '15.00',
+                              '17.00',
+                              '19.00',
+                              '21.00'
+                            ],
+                            selectedIndex: widget.selected2DTimeIndex,
+                            onTimeSelected: widget.on2DTimeSelected,
+                            availableTimes: availableTimes,
+                          ),
+                          const SizedBox(height: 16),
+                          ScheduleSection(
+                            title: 'Premier 2D',
+                            price: 'Rp 70.000',
+                            times: [
+                              '13.00',
+                              '15.00',
+                              '17.00',
+                              '19.00',
+                              '21.00'
+                            ],
+                            selectedIndex: widget.selected2DTimeIndex,
+                            onTimeSelected: widget.on2DTimeSelected,
+                            availableTimes: availableTimes,
+                          ),
+                          const SizedBox(height: 16),
+                          ScheduleSection(
+                            title: 'Premier 3D',
+                            price: 'Rp 80.000',
+                            times: [
+                              '13.00',
+                              '15.00',
+                              '17.00',
+                              '19.00',
+                              '21.00'
+                            ],
+                            selectedIndex: widget.selected3DTimeIndex,
+                            onTimeSelected: widget.on3DTimeSelected,
+                            availableTimes: availableTimes,
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      ScheduleSection(
-                        title: 'Reguler 3D',
-                        price: 'Rp 45.000',
-                        times: ['13.00', '15.00', '17.00', '19.00', '21.00'],
-                        selectedIndex: widget.selected2DTimeIndex,
-                        onTimeSelected: widget.on2DTimeSelected,
-                        availableTimes: availableTimes,
-                      ),
-                    ],
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text('Error: $err')),
-              );
-            },
+                    );
+                  },
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (err, stack) => Center(child: Text('Error: $err')),
+                );
+              },
+            ),
           ),
-          // const SizedBox(height: 16),
-          // // Jadwal 3D (contoh mirip 2D)
-          // ScheduleSection(
-          //   title: 'Reguler 3D',
-          //   price: 'Rp 40.000',
-          //   times: ['13.00', '15.00', '17.00', '19.00', '21.00'],
-          //   selectedIndex: widget.selected3DTimeIndex,
-          //   onTimeSelected: widget.on3DTimeSelected,
-          //   availableTimes: const {},
-          // ),
         ],
       ),
     );
@@ -203,7 +236,7 @@ class ScheduleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      // Removed fixed height to allow dynamic sizing
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 247, 247, 247),
@@ -223,7 +256,8 @@ class ScheduleSection extends StatelessWidget {
           const SizedBox(height: 12),
           GridView.builder(
             shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+            physics:
+                const NeverScrollableScrollPhysics(), // Disable internal scrolling
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 12,
@@ -239,9 +273,7 @@ class ScheduleSection extends StatelessWidget {
                 return '$hours:$minutes:00';
               }).toList();
               final time = formattedTimes[index];
-              // print(times);
               final isAvailable = availableTimes.contains(time);
-              print(availableTimes);
               final isSelected = index == selectedIndex;
 
               return OutlinedButton(

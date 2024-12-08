@@ -16,10 +16,25 @@ class MovieTabPage extends StatefulWidget {
   _MovieTabPageState createState() => _MovieTabPageState();
 }
 
-class _MovieTabPageState extends State<MovieTabPage> {
+class _MovieTabPageState extends State<MovieTabPage>
+    with SingleTickerProviderStateMixin {
   int selectedIndex = 0;
   int? selected2DTimeIndex;
   int? selected3DTimeIndex;
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize TabController
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 1);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,63 +43,69 @@ class _MovieTabPageState extends State<MovieTabPage> {
       initialIndex: 1,
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              MovieHeader(
-                title: widget.dataMovie.movieTitle,
-                genre: widget.dataMovie.genre,
-                duration: convertMinutesToTimeString(widget.dataMovie.duration),
-                director: widget.dataMovie.director,
-                rating: 3.5,
-                backgroundImageUrl: widget.dataMovie.cover ?? '',
-                posterImageUrl: widget.dataMovie.cover ?? '',
-              ),
-              const SizedBox(height: 20),
-              TabBar(
-                indicatorColor: Theme.of(context).primaryColor,
-                indicatorWeight: 3,
-                labelColor: Theme.of(context).primaryColor,
-                unselectedLabelColor: Colors.grey,
-                tabs: const [
-                  Tab(text: 'About Movie'),
-                  Tab(text: 'Schedule'),
-                ],
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height -
-                    kToolbarHeight -
-                    kTextTabBarHeight,
-                child: TabBarView(
-                  children: [
-                    DetailMovieView(
-                      movie: widget.dataMovie,
-                    ),
-                    DetailScheduleView(
-                      selectedIndex: selectedIndex,
-                      onDateSelected: (index) {
-                        setState(() {
-                          selectedIndex = index;
-                        });
-                      },
-                      selected2DTimeIndex: selected2DTimeIndex,
-                      selected3DTimeIndex: selected3DTimeIndex,
-                      on2DTimeSelected: (index) {
-                        setState(() {
-                          selected2DTimeIndex = index;
-                        });
-                      },
-                      on3DTimeSelected: (index) {
-                        setState(() {
-                          selected3DTimeIndex = index;
-                        });
-                      },
-                      movieID: widget.dataMovie.movieID,
-                    ),
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                backgroundColor: Colors.white,
+                expandedHeight: 400.0,
+                pinned: true,
+                floating: false,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: MovieHeader(
+                    title: widget.dataMovie.movieTitle,
+                    genre: widget.dataMovie.genre,
+                    duration:
+                        convertMinutesToTimeString(widget.dataMovie.duration),
+                    director: widget.dataMovie.director,
+                    rating: 3.5,
+                    backgroundImageUrl: widget.dataMovie.cover ?? '',
+                    posterImageUrl: widget.dataMovie.cover ?? '',
+                  ),
+                ),
+                bottom: TabBar(
+                  controller: _tabController,
+                  indicatorColor: Theme.of(context).primaryColor,
+                  indicatorWeight: 3,
+                  labelColor: Theme.of(context).primaryColor,
+                  unselectedLabelColor: Colors.grey,
+                  tabs: const [
+                    Tab(text: 'About Movie'),
+                    Tab(text: 'Schedule'),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+            ];
+          },
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              // About Movie Tab
+              DetailMovieView(
+                movie: widget.dataMovie,
+              ),
+              // Schedule Tab
+              DetailScheduleView(
+                selectedIndex: selectedIndex,
+                onDateSelected: (index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                selected2DTimeIndex: selected2DTimeIndex,
+                selected3DTimeIndex: selected3DTimeIndex,
+                on2DTimeSelected: (index) {
+                  setState(() {
+                    selected2DTimeIndex = index;
+                  });
+                },
+                on3DTimeSelected: (index) {
+                  setState(() {
+                    selected3DTimeIndex = index;
+                  });
+                },
+                movieID: widget.dataMovie.movieID,
+              ),
             ],
           ),
         ),
