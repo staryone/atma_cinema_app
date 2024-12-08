@@ -139,7 +139,7 @@ class _MyTicketViewState extends State<MyTicketView> {
                 ),
               ],
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 20),
             Expanded(
               child: PageView(
                 controller: _pageController,

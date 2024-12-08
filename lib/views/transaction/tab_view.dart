@@ -52,7 +52,9 @@ class _MovieTabPageState extends State<MovieTabPage> {
                 ],
               ),
               SizedBox(
-                height: 500,
+                height: MediaQuery.of(context).size.height -
+                    kToolbarHeight -
+                    kTextTabBarHeight,
                 child: TabBarView(
                   children: [
                     DetailMovieView(

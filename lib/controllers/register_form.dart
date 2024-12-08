@@ -1,3 +1,4 @@
+import 'package:atma_cinema/components/custom_snackbar_component.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -77,10 +78,9 @@ class _RegisterFormState extends State<RegisterForm> {
 
       try {
         await AuthService().register(formData);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Registration successful")),
-        );
-        Navigator.pop(context); // Navigate back or to login screen
+        CustomSnackbarComponent.showCustomSuccess(
+            context, "Registration successful");
+        Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error: $e")),

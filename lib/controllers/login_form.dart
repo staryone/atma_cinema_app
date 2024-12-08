@@ -1,9 +1,11 @@
 import 'package:atma_cinema/clients/user_client.dart';
 import 'package:atma_cinema/components/custom_snackbar_component.dart';
 import 'package:atma_cinema/models/user_model.dart';
+import 'package:atma_cinema/providers/user_provider.dart';
 import 'package:atma_cinema/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:atma_cinema/components/input_component.dart';
@@ -11,16 +13,16 @@ import 'package:atma_cinema/views/dashboard_view.dart';
 import 'package:atma_cinema/views/auth/register_view.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class LoginForm extends StatefulWidget {
+class LoginForm extends ConsumerStatefulWidget {
   final UserModel? data;
 
   const LoginForm({super.key, this.data});
 
   @override
-  State<LoginForm> createState() => _LoginFormState();
+  ConsumerState<LoginForm> createState() => _LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _LoginFormState extends ConsumerState<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -64,11 +66,10 @@ class _LoginFormState extends State<LoginForm> {
       await authService.loginWithGoogle(loginData);
 
       if (await authService.isLoggedIn()) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Login with Google successful")),
-        );
+        CustomSnackbarComponent.showCustomSuccess(
+            context, "Login with google successful");
 
-        final userClient = UserClient();
+        ref.invalidate(userFetchDataProvider);
 
         Navigator.pushReplacement(
           context,
@@ -82,7 +83,7 @@ class _LoginFormState extends State<LoginForm> {
       }
     } catch (e) {
       CustomSnackbarComponent.showCustomError(
-          context, "Login with Google failed: $e");
+          context, "Login with Google failed: {$e");
     } finally {
       setState(() {
         _isLoading = false;
@@ -123,12 +124,9 @@ class _LoginFormState extends State<LoginForm> {
       await authService.login(loginData);
 
       if (await authService.isLoggedIn()) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Login successful")),
-        );
+        CustomSnackbarComponent.showCustomSuccess(context, "Login successful");
 
-        final userClient = UserClient();
-        final userData = await userClient.getProfile();
+        ref.invalidate(userFetchDataProvider);
 
         Navigator.pushReplacement(
           context,

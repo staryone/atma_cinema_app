@@ -1,5 +1,6 @@
 import 'package:atma_cinema/clients/history_client.dart';
 import 'package:atma_cinema/clients/review_client.dart';
+import 'package:atma_cinema/components/custom_snackbar_component.dart';
 import 'package:atma_cinema/utils/time_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -311,19 +312,13 @@ class _HistoryOrderViewState extends ConsumerState<HistoryOrderView> {
                           );
 
                           _refreshData();
+                          CustomSnackbarComponent.showCustomSuccess(
+                              context, "Review saved successfully!");
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Review saved successfully!')),
-                          );
-
-                          // Tutup modal
                           Navigator.pop(context);
                         } catch (e) {
-                          // Tangani error
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Error: $e')),
-                          );
+                          CustomSnackbarComponent.showCustomError(
+                              context, "Review saved failed!");
                         }
                       },
                       style: ElevatedButton.styleFrom(

@@ -2,6 +2,7 @@
 import 'package:atma_cinema/models/promo_model.dart';
 import 'package:atma_cinema/providers/promo_provider.dart';
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/views/detail_promo_view.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -94,7 +95,7 @@ class _CarouselPromoState extends ConsumerState<CarouselPromo> {
                 final imageUrl = promo.pathImage ?? '';
 
                 return GestureDetector(
-                  onTap: () => {},
+                  onTap: () => _onPromoTap(context, promo),
                   child: Container(
                     margin: const EdgeInsets.all(6.0),
                     decoration: BoxDecoration(
@@ -136,6 +137,15 @@ class _CarouselPromoState extends ConsumerState<CarouselPromo> {
           ],
         );
       },
+    );
+  }
+
+  void _onPromoTap(BuildContext context, PromoModel promo) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailPromoView(promo: promo),
+      ),
     );
   }
 }
