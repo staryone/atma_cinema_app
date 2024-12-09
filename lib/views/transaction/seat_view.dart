@@ -47,6 +47,7 @@ class _SeatSelectionScreenState extends ConsumerState<SeatSelectionScreen> {
   Widget build(BuildContext context) {
     final screeningAsync = ref.watch(screeningsFetchByIdProvider);
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
