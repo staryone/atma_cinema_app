@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/get.dart';
 
-const String baseUrl = "http://192.168.56.1:8000/api";
+const String baseUrl =
+    "https://lightslategray-dinosaur-894765.hostingersite.com/api";
 // const String baseUrl = "http://172.21.64.1:8000/api";
 const Color colorPrimary = Color(0xFF001F3F);
 const Color colorBorder = Color(0xFFD9D9D9);

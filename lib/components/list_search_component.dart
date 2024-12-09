@@ -1,5 +1,8 @@
 import 'package:atma_cinema/models/movie_model.dart';
+import 'package:atma_cinema/models/promo_model.dart';
 import 'package:atma_cinema/providers/movie_provider.dart';
+import 'package:atma_cinema/views/detail_promo_view.dart';
+import 'package:atma_cinema/views/transaction/tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -53,7 +56,7 @@ class _ListItemSearchState extends ConsumerState<ListItemSearch> {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          onTap: () {},
+                          onTap: () => _onMovieTap(context, movie),
                         ),
                         const SizedBox(height: 8),
                       ],
@@ -65,6 +68,18 @@ class _ListItemSearchState extends ConsumerState<ListItemSearch> {
             loading: () => _buildSkeletonPlaceholder(),
             error: (error, stack) => Center(child: Text('Error: $error')),
           ),
+    );
+  }
+
+  void _onMovieTap(BuildContext context, MovieModel movie) {
+    print(movie.movieTitle as String);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieTabPage(
+          dataMovie: movie,
+        ),
+      ),
     );
   }
 }

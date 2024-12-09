@@ -35,7 +35,7 @@ class MovieHeader extends StatelessWidget {
             // Video background
             Image.network(
               backgroundImageUrl,
-              height: 200,
+              height: 160,
               width: double.infinity,
               fit: BoxFit.cover,
             ),
