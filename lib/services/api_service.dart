@@ -21,6 +21,36 @@ class ApiService {
     return _processResponse(response);
   }
 
+  Future<dynamic> patch(String endpoint, Map<String, dynamic> body,
+      {Map<String, String>? headers}) async {
+    final url = Uri.parse('$baseUrlApi/$endpoint');
+    final response = await http.patch(
+      url,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        ...(headers ?? {}),
+      },
+      body: jsonEncode(body),
+    );
+    return _processResponse(response);
+  }
+
+  Future<dynamic> put(String endpoint, Map<String, dynamic> body,
+      {Map<String, String>? headers}) async {
+    final url = Uri.parse('$baseUrlApi/$endpoint');
+    final response = await http.put(
+      url,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        ...(headers ?? {}),
+      },
+      body: jsonEncode(body),
+    );
+    return _processResponse(response);
+  }
+
   Future<dynamic> get(String endpoint, {Map<String, String>? headers}) async {
     final url = Uri.parse('$baseUrlApi/$endpoint');
     final response = await http.get(

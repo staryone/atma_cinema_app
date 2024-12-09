@@ -18,7 +18,7 @@ class TicketClient {
     final AuthService _auth = AuthService();
     final String? token = await _auth.getToken();
 
-    return await _api.post("tickets/create", data, headers: {
+    return await _api.post("tickets", data, headers: {
       "Authorization": "Bearer $token",
     });
   }

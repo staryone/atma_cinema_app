@@ -7,6 +7,7 @@ final screeningClientProvider = Provider(
 );
 
 final movieIDProvider = StateProvider<String>((ref) => '');
+final screeningIDProvider = StateProvider<String>((ref) => '');
 
 final screeningsFetchByMovieProvider =
     FutureProvider<List<ScreeningModel>>((ref) async {
@@ -17,4 +18,12 @@ final screeningsFetchByMovieProvider =
   return screenings
       .map((screening) => ScreeningModel.fromJson(screening))
       .toList();
+});
+
+final screeningsFetchByIdProvider = FutureProvider<ScreeningModel>((ref) async {
+  final screeningClient = ref.read(screeningClientProvider);
+  final screeningID = ref.watch(screeningIDProvider);
+  final screening = await screeningClient.fetchScreeningById(screeningID);
+
+  return ScreeningModel.fromJson(screening);
 });

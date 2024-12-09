@@ -1,5 +1,7 @@
 // lib/components/carousel_with_indicator.dart
+import 'package:atma_cinema/models/movie_model.dart';
 import 'package:atma_cinema/providers/movie_provider.dart';
+import 'package:atma_cinema/views/transaction/tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -90,6 +92,7 @@ class _CarouselUpcomingMoviesState
                 final imageUrl = movie.cover ?? '';
 
                 return GestureDetector(
+                  onTap: () => _onMovieTap(context, movie),
                   child: Container(
                     margin: const EdgeInsets.all(6.0),
                     decoration: BoxDecoration(
@@ -131,6 +134,18 @@ class _CarouselUpcomingMoviesState
           ],
         );
       },
+    );
+  }
+
+  void _onMovieTap(BuildContext context, MovieModel movie) {
+    print(movie.movieTitle as String);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieTabPage(
+          dataMovie: movie,
+        ),
+      ),
     );
   }
 }

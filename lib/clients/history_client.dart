@@ -18,16 +18,17 @@ class HistoryClient {
     final AuthService _auth = AuthService();
     final String? token = await _auth.getToken();
 
-    return await _api.post("history/create", data, headers: {
+    return await _api.post("histories", data, headers: {
       "Authorization": "Bearer $token",
     });
   }
 
-  Future<Map<String, dynamic>> addReviewToHistory(Map<String, dynamic> data, String historyID) async {
+  Future<Map<String, dynamic>> addReviewToHistory(
+      Map<String, dynamic> data, String historyID) async {
     final AuthService _auth = AuthService();
     final String? token = await _auth.getToken();
 
-    return await _api.post("history/$historyID/add-review", data, headers: {
+    return await _api.post("histories/$historyID/add-review", data, headers: {
       "Authorization": "Bearer $token",
     });
   }

@@ -306,7 +306,8 @@ class _HistoryOrderViewState extends ConsumerState<HistoryOrderView> {
 
                           final reviewID = reviewResponse['data']['reviewID'];
 
-                          await historyClient.addReviewToHistory(
+                          final response =
+                              await historyClient.addReviewToHistory(
                             {"reviewID": reviewID},
                             historyID,
                           );

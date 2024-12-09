@@ -14,7 +14,6 @@ class HistoryModel {
       this.review});
 
   factory HistoryModel.fromJson(Map<String, dynamic> json) {
-    print(json);
     return HistoryModel(
       historyID: json['historyID'],
       userID: json['userID'],

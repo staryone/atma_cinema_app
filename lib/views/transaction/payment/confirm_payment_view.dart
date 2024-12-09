@@ -1,15 +1,23 @@
 import 'dart:async';
+import 'package:atma_cinema/models/payment_model.dart';
+import 'package:atma_cinema/models/screening_model.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/views/transaction/payment/payment_view.dart';
+import 'package:intl/intl.dart';
 
 class ConfirmPaymentPage extends StatefulWidget {
+  final PaymentModel paymentData;
+  final List<String> seatNumber;
+
+  const ConfirmPaymentPage(
+      {super.key, required this.paymentData, required this.seatNumber});
   @override
   _ConfirmPaymentPageState createState() => _ConfirmPaymentPageState();
 }
 
 class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
-  Duration remainingTime = Duration(minutes: 9, seconds: 31);
+  Duration remainingTime = Duration(minutes: 1, seconds: 31);
   Timer? countdownTimer;
 
   @override
@@ -39,6 +47,17 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
     String minutes = twoDigits(duration.inMinutes.remainder(60));
     String seconds = twoDigits(duration.inSeconds.remainder(60));
     return "${twoDigits(duration.inHours)}:$minutes:$seconds";
+  }
+
+  String formatDateTime(DateTime date, String time) {
+    DateTime dateTime = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      int.parse(time.split(":")[0]),
+      int.parse(time.split(":")[1]),
+    );
+    return DateFormat("EEEE, dd MMM yyyy, HH:mm").format(dateTime);
   }
 
   @override
@@ -101,7 +120,7 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                           borderRadius: BorderRadius.circular(8),
                           image: DecorationImage(
                             image: NetworkImage(
-                                "https://i.pinimg.com/564x/a4/9d/c8/a49dc85d98d25389f9d939bbd8663e43.jpg"),
+                                widget.paymentData.screening.movie.cover ?? ''),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -112,7 +131,7 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Dilan 1990",
+                              widget.paymentData.screening.movie.movieTitle,
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -121,7 +140,8 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Saturday, 12 Oct 2021, 13:00",
+                              formatDateTime(widget.paymentData.screening.date,
+                                  widget.paymentData.screening.time),
                               style:
                                   TextStyle(color: Colors.black, fontSize: 9),
                               overflow: TextOverflow
@@ -129,7 +149,7 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "A9",
+                              widget.seatNumber.join(','),
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 13,
@@ -137,7 +157,7 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "1 Tickets",
+                              "${widget.seatNumber.length} Tickets",
                               style:
                                   TextStyle(color: Colors.black, fontSize: 11),
                             ),
@@ -147,7 +167,7 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 80.0),
                         child: Text(
-                          "Rp45.000  x  1",
+                          "Rp${widget.paymentData.screening.price}  x  1",
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -174,7 +194,7 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                             fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "Rp45.000",
+                        "Rp${widget.paymentData.totalPayment}",
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -228,14 +248,14 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Rp45.000",
+                            "Rp${widget.paymentData.totalPayment}",
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 8),
                           // Kolom untuk harga
                           Text(
-                            "Payment ID: PV3427JK",
+                            "Payment ID: ${widget.paymentData.paymentID}",
                             style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey,
@@ -340,7 +360,13 @@ class _ConfirmPaymentPageState extends State<ConfirmPaymentPage> {
         // Navigasi ke PaymentView
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PaymentView()),
+          MaterialPageRoute(
+            builder: (context) => PaymentView(
+              paymentData: widget.paymentData,
+              duration: remainingTime,
+              seatNumber: widget.seatNumber,
+            ),
+          ),
         );
       },
       child: Container(

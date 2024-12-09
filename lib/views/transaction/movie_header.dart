@@ -1,3 +1,5 @@
+import 'package:atma_cinema/models/movie_model.dart';
+import 'package:atma_cinema/views/transaction/review_view.dart';
 import 'package:flutter/material.dart';
 
 class MovieHeader extends StatelessWidget {
@@ -8,6 +10,7 @@ class MovieHeader extends StatelessWidget {
   final double rating;
   final String backgroundImageUrl;
   final String posterImageUrl;
+  final MovieModel movie;
 
   const MovieHeader({
     Key? key,
@@ -18,6 +21,7 @@ class MovieHeader extends StatelessWidget {
     required this.rating,
     required this.backgroundImageUrl,
     required this.posterImageUrl,
+    required this.movie,
   }) : super(key: key);
 
   @override
@@ -94,48 +98,65 @@ class MovieHeader extends StatelessWidget {
                     Text('Duration: $duration'),
                     Text('Director: $director'),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 25.0),
-                          child: Text(
-                            rating.toStringAsFixed(1),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange,
-                            ),
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReviewView(
+                            movie: movie,
+                            rating: rating,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 25.0),
-                          child: Row(
-                            children: List.generate(5, (index) {
-                              if (index < rating.floor()) {
-                                return const Icon(
-                                  Icons.star,
-                                  color: Colors.orange,
-                                  size: 20,
-                                );
-                              } else if (index == rating.floor() &&
-                                  rating % 1 != 0) {
-                                return const Icon(
-                                  Icons.star_half,
-                                  color: Colors.orange,
-                                  size: 20,
-                                );
-                              } else {
-                                return const Icon(
-                                  Icons.star_border,
-                                  color: Colors.orange,
-                                  size: 20,
-                                );
-                              }
-                            }),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                // margin: const EdgeInsets.only(bottom: 25.0),
+                                child: Text(
+                                  rating.toStringAsFixed(1),
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                // margin: const EdgeInsets.only(bottom: 25.0),
+                                child: Row(
+                                  children: List.generate(5, (index) {
+                                    if (index < rating.floor()) {
+                                      return const Icon(
+                                        Icons.star,
+                                        color: Colors.orange,
+                                        size: 20,
+                                      );
+                                    } else if (index == rating.floor() &&
+                                        rating % 1 != 0) {
+                                      return const Icon(
+                                        Icons.star_half,
+                                        color: Colors.orange,
+                                        size: 20,
+                                      );
+                                    } else {
+                                      return const Icon(
+                                        Icons.star_border,
+                                        color: Colors.orange,
+                                        size: 20,
+                                      );
+                                    }
+                                  }),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          const Text('See all review')
+                        ],
+                      ),
                     ),
                   ],
                 ),

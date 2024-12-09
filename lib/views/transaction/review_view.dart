@@ -1,15 +1,38 @@
+import 'package:atma_cinema/clients/review_client.dart';
+import 'package:atma_cinema/models/user_review_model.dart';
+import 'package:atma_cinema/providers/review_provider.dart';
+import 'package:atma_cinema/providers/screening_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:atma_cinema/models/movie_model.dart';
+import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class ReviewView extends StatelessWidget {
-  final String movieTitle;
+// Ubah menjadi ConsumerWidget
+class ReviewView extends ConsumerWidget {
+  final MovieModel movie;
+  final double rating;
 
-  ReviewView({required this.movieTitle});
+  ReviewView({required this.movie, required this.rating});
+
+  String formatDateTime(DateTime date) {
+    DateTime dateTime = DateTime(
+      date.year,
+      date.month,
+      date.day,
+    );
+    return DateFormat("EEEE, dd MMM yyyy").format(dateTime);
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final reviewsAsyncValue = ref.watch(reviewsFetchAllByMovieProvider);
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.blue[900],
+        backgroundColor: colorPrimary,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -38,8 +61,8 @@ class ReviewView extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        '', // Tambahkan gambar poster jika ada
+                      child: Image.network(
+                        movie.cover ?? '',
                         width: 100,
                         height: 150,
                         fit: BoxFit.cover,
@@ -52,7 +75,7 @@ class ReviewView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          movieTitle,
+                          movie.movieTitle,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -60,7 +83,7 @@ class ReviewView extends StatelessWidget {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          'Monday, 12 August 2023',
+                          movie.ageRating,
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 15,
@@ -101,10 +124,41 @@ class ReviewView extends StatelessWidget {
               SizedBox(height: 24),
               Divider(),
 
-              // Review List
-              _buildReviewItem('@user5678', 'BAGUSS film fav saya!!!', 4.5),
-              _buildReviewItem('@user5678', 'BAGUSS film fav saya!!!', 4.5),
-              _buildReviewItem('@user5678', 'BAGUSS film fav saya!!!', 4.5),
+              reviewsAsyncValue.when(
+                loading: () => Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(
+                  child: Center(
+                    child: Text(
+                      'Reviews not found',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+                data: (reviews) {
+                  if (reviews.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No reviews found for this movie.',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    );
+                  }
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: reviews.length,
+                    separatorBuilder: (context, index) => Divider(),
+                    itemBuilder: (context, index) {
+                      final review = reviews[index];
+                      return _buildReviewItem(
+                        review.fullName,
+                        review.comment ?? 'No comment provided.',
+                        review.rating.toDouble(),
+                      );
+                    },
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -113,14 +167,14 @@ class ReviewView extends StatelessWidget {
   }
 
   // Widget untuk menampilkan review item
-  Widget _buildReviewItem(String username, String review, double rating) {
+  Widget _buildReviewItem(String fullName, String review, double rating) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            username,
+            fullName,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           SizedBox(height: 4),
@@ -145,15 +199,8 @@ class ReviewView extends StatelessWidget {
             review,
             style: TextStyle(fontSize: 14),
           ),
-          Divider(),
         ],
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: ReviewView(movieTitle: 'Dilan 1990'),
-  ));
 }

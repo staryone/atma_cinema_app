@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:atma_cinema/models/screening_model.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -134,69 +136,83 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
                 final screeningsAsyncValue =
                     ref.watch(screeningsFetchByMovieProvider);
                 return screeningsAsyncValue.when(
-                  data: (screenings) {
-                    // Filter screenings by selected date
-                    final selectedDate =
-                        dates[widget.selectedDateIndex]['date'];
-                    final selectedTime = DateFormat('HH:mm:ss')
-                        .parse(dates[widget.selectedDateIndex]['time'] ?? '');
-                    // screenings.map((screening) => print(screening));
-                    final filteredScreenings = screenings
-                        .where((screening) =>
-                            screening.date ==
-                                DateTime.parse(selectedDate ?? '') &&
-                            selectedTime.isBefore(
-                                DateFormat('HH:mm:ss').parse(screening.time)))
-                        .toList();
-                    // print(filteredScreenings);
+                    data: (screenings) {
+                      // Filter screenings by selected date
+                      final selectedDate =
+                          dates[widget.selectedDateIndex]['date'];
+                      final selectedTime = DateFormat('HH:mm:ss')
+                          .parse(dates[widget.selectedDateIndex]['time'] ?? '');
+                      // screenings.map((screening) => print(screening));
+                      final filteredScreenings = screenings
+                          .where((screening) =>
+                              screening.date ==
+                                  DateTime.parse(selectedDate ?? '') &&
+                              selectedTime.isBefore(
+                                  DateFormat('HH:mm:ss').parse(screening.time)))
+                          .toList();
+                      // print(filteredScreenings);
 
-                    // Group screenings by studio
-                    final Map<String, List<ScreeningModel>> screeningsByStudio =
-                        {};
-                    for (var screening in filteredScreenings) {
-                      screeningsByStudio
-                          .putIfAbsent(screening.studio.name, () => [])
-                          .add(screening);
-                    }
-
-                    List<Widget> scheduleSections = [];
-                    for (String studioName in [
-                      'Reguler 2D',
-                      'Reguler 3D',
-                      'Premier 2D',
-                      'Premier 3D'
-                    ]) {
-                      final screeningsList =
-                          screeningsByStudio[studioName] ?? [];
-                      if (screeningsList.isNotEmpty) {
-                        scheduleSections.add(
-                          ScheduleSection(
-                            title: studioName,
-                            price: getPriceForStudio(studioName),
-                            screenings: screeningsList,
-                            selectedScreening: widget.selectedScreening,
-                            onTimeSelected: (screening) {
-                              widget.onScreeningSelected(screening);
-                            },
-                            color: studioName.startsWith('Premier')
-                                ? const Color(0xFFF3E9D3)
-                                : const Color.fromARGB(255, 239, 238, 238),
-                          ),
-                        );
-                        scheduleSections.add(const SizedBox(height: 16));
+                      // Group screenings by studio
+                      final Map<String, List<ScreeningModel>>
+                          screeningsByStudio = {};
+                      for (var screening in filteredScreenings) {
+                        screeningsByStudio
+                            .putIfAbsent(screening.studio.name, () => [])
+                            .add(screening);
                       }
-                    }
 
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: scheduleSections,
-                      ),
-                    );
-                  },
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (err, stack) => Center(child: Text('Error: $err')),
-                );
+                      List<Widget> scheduleSections = [];
+                      for (String studioName in [
+                        'Reguler 2D',
+                        'Reguler 3D',
+                        'Premier 2D',
+                        'Premier 3D'
+                      ]) {
+                        final screeningsList =
+                            screeningsByStudio[studioName] ?? [];
+                        if (screeningsList.isNotEmpty) {
+                          scheduleSections.add(
+                            ScheduleSection(
+                              title: studioName,
+                              price:
+                                  "Rp${screeningsByStudio[studioName]!.first.price.toString()}",
+                              screenings: screeningsList,
+                              selectedScreening: widget.selectedScreening,
+                              onTimeSelected: (screening) {
+                                widget.onScreeningSelected(screening);
+                              },
+                              color: studioName.startsWith('Premier')
+                                  ? const Color(0xFFF3E9D3)
+                                  : const Color.fromARGB(255, 239, 238, 238),
+                            ),
+                          );
+                          scheduleSections.add(const SizedBox(height: 16));
+                        }
+                      }
+                      
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: scheduleSections,
+                        ),
+                      );
+                    },
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (err, stack) {
+                      String message;
+
+                      if (err is HttpException) {
+                        message = err.message;
+                      } else if (err is Exception) {
+                        message = err
+                            .toString()
+                            .replaceFirst(RegExp(r'^Exception: '), '');
+                      } else {
+                        message = 'Terjadi kesalahan yang tidak diketahui';
+                      }
+
+                      return Center(child: Text(message));
+                    });
               },
             ),
           ),
@@ -205,20 +221,20 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
     );
   }
 
-  String getPriceForStudio(String studioName) {
-    switch (studioName) {
-      case 'Reguler 2D':
-        return 'Rp 40.000';
-      case 'Reguler 3D':
-        return 'Rp 45.000';
-      case 'Premier 2D':
-        return 'Rp 70.000';
-      case 'Premier 3D':
-        return 'Rp 80.000';
-      default:
-        return '';
-    }
-  }
+  // String getPriceForStudio(String studioName) {
+  //   switch (studioName) {
+  //     case 'Reguler 2D':
+  //       return 'Rp 40.000';
+  //     case 'Reguler 3D':
+  //       return 'Rp 45.000';
+  //     case 'Premier 2D':
+  //       return 'Rp 70.000';
+  //     case 'Premier 3D':
+  //       return 'Rp 80.000';
+  //     default:
+  //       return '';
+  //   }
+  // }
 }
 
 class ScheduleSection extends StatelessWidget {

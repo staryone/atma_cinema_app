@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:atma_cinema/components/qr_component.dart';
 import 'package:atma_cinema/models/ticket_model.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/myticket/pdf_invoice.dart';
@@ -10,9 +13,47 @@ class TicketDetailView extends StatelessWidget {
 
   const TicketDetailView({super.key, required this.ticket});
 
+  void _showQrDialog(BuildContext context, String ticketId) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Stack(
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: Container(
+                  color: Colors.black.withOpacity(0),
+                ),
+              ),
+            ),
+            Center(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GenerateQr(qrData: ticketId),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Detail Ticket'),
         backgroundColor: Color(0xFF0A1D37),
@@ -96,13 +137,29 @@ class TicketDetailView extends StatelessWidget {
                   ),
                   Container(
                     width: 70,
-                    height: 70,
+                    height: 90,
                     child: GestureDetector(
-                      onTap: () {},
-                      child: Icon(
-                        Icons.qr_code,
-                        color: Colors.white,
-                        size: 60,
+                      onTap: () {
+                        _showQrDialog(context, ticket.ticketID);
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.qr_code,
+                            color: Colors.white,
+                            size: 60,
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Tap for details',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
                     ),
                   ),

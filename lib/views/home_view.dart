@@ -5,6 +5,7 @@ import 'package:atma_cinema/components/carousel_upcoming_movie_component.dart';
 import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/providers/movie_provider.dart';
 import 'package:atma_cinema/providers/promo_provider.dart';
+import 'package:atma_cinema/providers/screening_provider.dart';
 import 'package:atma_cinema/providers/user_provider.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:atma_cinema/views/detail_promo_view.dart';

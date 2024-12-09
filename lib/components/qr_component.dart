@@ -10,9 +10,10 @@ class GenerateQr extends StatelessWidget {
   Widget build(BuildContext context) {
     return QrImageView(
       data: qrData,
-      version: 6,
-      size: 200,
+      version: QrVersions.auto,
+      size: 300,
       padding: const EdgeInsets.all(50),
+      embeddedImage: AssetImage('images/ac_logo.png'),
     );
   }
 }

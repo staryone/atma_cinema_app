@@ -58,9 +58,10 @@ class _MovieTabPageState extends State<MovieTabPage>
                     duration:
                         convertMinutesToTimeString(widget.dataMovie.duration),
                     director: widget.dataMovie.director,
-                    rating: 3.5,
+                    rating: 4,
                     backgroundImageUrl: widget.dataMovie.cover ?? '',
                     posterImageUrl: widget.dataMovie.cover ?? '',
+                    movie: widget.dataMovie,
                   ),
                 ),
                 bottom: TabBar(

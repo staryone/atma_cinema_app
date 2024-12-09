@@ -1,38 +1,45 @@
 import 'dart:async';
+import 'package:atma_cinema/clients/history_client.dart';
+import 'package:atma_cinema/clients/payment_client.dart';
+import 'package:atma_cinema/clients/screening_client.dart';
+import 'package:atma_cinema/clients/ticket_client.dart';
+import 'package:atma_cinema/models/payment_model.dart';
+import 'package:atma_cinema/providers/history_provider.dart';
+import 'package:atma_cinema/providers/screening_provider.dart';
+import 'package:atma_cinema/providers/ticket_provider.dart';
+import 'package:atma_cinema/views/transaction/payment/success_payment_view.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/utils/constants.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: PaymentView(),
-    );
-  }
-}
-
-class PaymentView extends StatefulWidget {
-  const PaymentView({Key? key}) : super(key: key);
+class PaymentView extends ConsumerStatefulWidget {
+  final PaymentModel paymentData;
+  final Duration duration;
+  final List<String> seatNumber;
+  const PaymentView(
+      {super.key,
+      required this.paymentData,
+      required this.duration,
+      required this.seatNumber});
 
   @override
-  State<PaymentView> createState() => _PaymentViewState();
+  ConsumerState<PaymentView> createState() => _PaymentViewState();
 }
 
-class _PaymentViewState extends State<PaymentView> {
-  Duration duration = const Duration(minutes: 9, seconds: 10); // Waktu awal
+class _PaymentViewState extends ConsumerState<PaymentView> {
+  late Duration duration; // Waktu awal
   Timer? timer;
+
+  final TicketClient _ticketClient = TicketClient();
+  final HistoryClient _historyClient = HistoryClient();
+  final PaymentClient _paymentClient = PaymentClient();
+  final ScreeningClient _screeningClient = ScreeningClient();
 
   @override
   void initState() {
     super.initState();
+    duration = widget.duration;
     startTimer();
   }
 
@@ -60,6 +67,63 @@ class _PaymentViewState extends State<PaymentView> {
     return "${d.inHours.toString().padLeft(2, '0')}:$minutes:$seconds";
   }
 
+  Future<void> _handleCheckStatus() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      for (String seat in widget.seatNumber) {
+        await _ticketClient.createTicket({
+          'paymentID': widget.paymentData.paymentID,
+          'seatID': seat,
+          'status': 'Success',
+        });
+      }
+
+      final historyData = {
+        'paymentID': widget.paymentData.paymentID,
+      };
+      await _historyClient.createHistory(historyData);
+
+      const paymentStatus = 'completed';
+      await _paymentClient.editStatusPayment(
+          widget.paymentData.paymentID, paymentStatus);
+
+      await _screeningClient.updateSeatLayout(
+          widget.paymentData.screening.screeningID,
+          widget.seatNumber,
+          "booked");
+
+      Navigator.of(context).pop();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Payment status updated successfully!')),
+      );
+
+      ref.invalidate(ticketsFetchActiveProvider);
+      ref.invalidate(historysFetchActiveProvider);
+      ref.invalidate(screeningsFetchByMovieProvider);
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentSuccessView(
+            paymentData: widget.paymentData,
+          ),
+        ),
+        (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,8 +131,8 @@ class _PaymentViewState extends State<PaymentView> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: colorPrimary,
-        title: const Text(
-          "Joko",
+        title: Text(
+          widget.paymentData.user.fullName,
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -111,8 +175,8 @@ class _PaymentViewState extends State<PaymentView> {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Text(
-                              "Payment ID: PV3427JK",
+                            Text(
+                              "Payment ID: ${widget.paymentData.paymentID}",
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey,
@@ -129,8 +193,7 @@ class _PaymentViewState extends State<PaymentView> {
                       ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(
-                          top: 30), // Tambahkan jarak ke bawah
+                      padding: const EdgeInsets.only(top: 30),
                       child: Text(
                         "Details ▾",
                         style: const TextStyle(
@@ -283,7 +346,7 @@ class _PaymentViewState extends State<PaymentView> {
               ),
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
-            onPressed: () {},
+            onPressed: _handleCheckStatus,
             child: const Text(
               "Check status",
               style: TextStyle(
