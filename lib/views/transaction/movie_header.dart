@@ -48,17 +48,6 @@ class MovieHeader extends StatelessWidget {
                 ),
               ),
             ),
-            // Arrow back button
-            Positioned(
-              top: 10,
-              left: 10,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
             // Poster positioned to overlap with video
             Positioned(
               bottom: -170,

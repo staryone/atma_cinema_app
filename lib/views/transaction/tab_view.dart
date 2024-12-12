@@ -23,6 +23,7 @@ class _MovieTabPageState extends State<MovieTabPage>
   ScreeningModel? selectedScreening;
   late TabController _tabController;
 
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +49,7 @@ class _MovieTabPageState extends State<MovieTabPage>
             return [
               SliverAppBar(
                 backgroundColor: Colors.white,
-                expandedHeight: 420.0,
+                expandedHeight: 450.0,
                 pinned: true,
                 floating: false,
                 flexibleSpace: FlexibleSpaceBar(
