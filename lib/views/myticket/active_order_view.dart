@@ -1,7 +1,9 @@
 import 'package:atma_cinema/models/ticket_model.dart';
 import 'package:atma_cinema/providers/ticket_provider.dart';
 import 'package:atma_cinema/utils/constants.dart';
+import 'package:atma_cinema/views/home_view.dart';
 import 'package:atma_cinema/views/myticket/detail_ticket_view.dart';
+import 'package:atma_cinema/views/search/search_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -47,7 +49,14 @@ class _ActiveOrderViewState extends ConsumerState<ActiveOrderView> {
               ),
               SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchView(),
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   fixedSize: Size(128, 28),
                   backgroundColor: Color(0xFF0A1D37),

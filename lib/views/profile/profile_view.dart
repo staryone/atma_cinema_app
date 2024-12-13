@@ -1,3 +1,4 @@
+import 'package:atma_cinema/components/custom_snackbar_component.dart';
 import 'package:atma_cinema/models/user_model.dart';
 import 'package:atma_cinema/providers/user_provider.dart';
 import 'package:atma_cinema/services/auth_service.dart';
@@ -24,9 +25,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     final authService = AuthService();
     try {
       await authService.logout();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Logout successful")),
-      );
+      CustomSnackbarComponent.showCustomSuccess(context, "Logout successful");
 
       Navigator.pushAndRemoveUntil(
         context,
@@ -34,9 +33,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
         (route) => false,
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Logout failed: $e")),
-      );
+      CustomSnackbarComponent.showCustomError(context, "Logout failed");
     }
   }
 

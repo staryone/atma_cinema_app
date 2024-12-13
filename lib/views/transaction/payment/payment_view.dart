@@ -99,10 +99,6 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
 
       Navigator.of(context).pop();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Payment status updated successfully!')),
-      );
-
       ref.invalidate(ticketsFetchActiveProvider);
       ref.invalidate(historysFetchActiveProvider);
       ref.invalidate(screeningsFetchByMovieProvider);

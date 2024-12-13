@@ -290,7 +290,7 @@ class _SeatSelectionScreenState extends ConsumerState<SeatSelectionScreen> {
                 ],
               );
             },
-            error: (err, _) => Center(child: Text('Error: $err')),
+            error: (err, _) => Center(child: Text('No seat found')),
             loading: () => const Center(child: CircularProgressIndicator())));
   }
 

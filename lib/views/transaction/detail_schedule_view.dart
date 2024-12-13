@@ -166,7 +166,9 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
                         'Reguler 2D',
                         'Reguler 3D',
                         'Premier 2D',
-                        'Premier 3D'
+                        'Premier 3D',
+                        'Reguler 2D I',
+                        'Reguler 2D II'
                       ]) {
                         final screeningsList =
                             screeningsByStudio[studioName] ?? [];
@@ -189,7 +191,7 @@ class _DetailScheduleViewState extends ConsumerState<DetailScheduleView> {
                           scheduleSections.add(const SizedBox(height: 16));
                         }
                       }
-                      
+
                       return SingleChildScrollView(
                         child: Column(
                           children: scheduleSections,

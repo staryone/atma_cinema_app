@@ -2,6 +2,7 @@ import 'package:atma_cinema/clients/history_client.dart';
 import 'package:atma_cinema/clients/review_client.dart';
 import 'package:atma_cinema/components/custom_snackbar_component.dart';
 import 'package:atma_cinema/utils/time_utils.dart';
+import 'package:atma_cinema/views/search/search_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:atma_cinema/providers/history_provider.dart';
@@ -52,7 +53,14 @@ class _HistoryOrderViewState extends ConsumerState<HistoryOrderView> {
                     ),
                     SizedBox(height: 30),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SearchView(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         fixedSize: Size(128, 28),
                         backgroundColor: Color(0xFF0A1D37),

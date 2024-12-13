@@ -71,53 +71,75 @@ class ReviewView extends ConsumerWidget {
                   ),
                   SizedBox(width: 16),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          movie.movieTitle,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          movie.ageRating,
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 15,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.star, color: Colors.amber, size: 32),
-                            SizedBox(width: 8),
-                            Text(
-                              '4.0',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 40,
-                                color: Colors.amber,
+                    child: reviewsAsyncValue.when(
+                        loading: () =>
+                            Center(child: CircularProgressIndicator()),
+                        error: (error, stack) => Center(
+                              child: Center(
+                                child: Text(
+                                  'Reviews not found',
+                                  style: TextStyle(color: Colors.red),
+                                ),
                               ),
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 6.0),
-                          child: Text(
-                            '37 ratings - 11 reviews',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                        data: (reviews) {
+                          int totalRating = reviews.fold(
+                              0, (sum, review) => sum + review.rating);
+                          double averageRating = reviews.isNotEmpty
+                              ? totalRating / reviews.length
+                              : 0.0;
+                          String totalRatingString = totalRating.toString();
+                          String avgRatingString =
+                              averageRating.toStringAsFixed(2);
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                movie.movieTitle,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                movie.ageRating,
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 15,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.star,
+                                      color: Colors.amber, size: 32),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    avgRatingString,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 40,
+                                      color: Colors.amber,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 6.0),
+                                child: Text(
+                                  '$totalRatingString ratings - ${reviews.length.toString()} reviews',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
                   ),
                 ],
               ),

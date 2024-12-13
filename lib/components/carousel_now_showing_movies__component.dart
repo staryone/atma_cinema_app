@@ -100,7 +100,7 @@ class _CarouselNowShowingMoviesState
                   onTap: () => _onMovieTap(context, movie),
                   child: Stack(
                     children: [
-                      if (isBlur)
+                      if (isBlur && movies.length > 1)
                         BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                           child: Opacity(

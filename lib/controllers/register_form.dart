@@ -82,30 +82,29 @@ class _RegisterFormState extends State<RegisterForm> {
             context, "Registration successful");
         Navigator.pop(context);
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: $e")),
-        );
+        CustomSnackbarComponent.showCustomError(
+            context, "Registration Failed, Internal Server Error");
       }
     } else {
       if (_fullnameController.text.isEmpty) {
-        showCustomError(context, "Full name tidak boleh kosong");
+        showCustomError(context, "Full name cannot be empty");
       } else if (_emailController.text.isEmpty) {
-        showCustomError(context, "Email tidak boleh kosong");
+        showCustomError(context, "Email cannot be empty");
       } else if (!_emailController.text.contains('@') ||
           !_emailController.text.contains('.')) {
-        showCustomError(context, "Masukkan email yang valid");
+        showCustomError(context, "Enter a valid email");
       } else if (_passwordController.text.isEmpty) {
-        showCustomError(context, "Password tidak boleh kosong");
+        showCustomError(context, "Password cannot be empty");
       } else if (_passwordController.text.length < 5) {
-        showCustomError(context, "Password minimal 5 digit");
+        showCustomError(context, "Password must be at least 5 characters long");
       } else if (!_passwordConfirmController.text
           .contains(_passwordController.text)) {
         showCustomError(
-            context, "Reenter password tidak sesuai dengan password");
+            context, "Reentered password does not match the password");
       } else if (_notelpController.text.isEmpty) {
-        showCustomError(context, "Nomor telepon tidak boleh kosong");
+        showCustomError(context, "Phone number cannot be empty");
       } else if (_tanggalController.text.isEmpty) {
-        showCustomError(context, "Tanggal lahir tidak boleh kosong");
+        showCustomError(context, "Date of birth cannot be empty");
       }
     }
   }

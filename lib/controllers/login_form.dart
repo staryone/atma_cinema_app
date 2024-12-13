@@ -83,11 +83,14 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         );
       } else {
         CustomSnackbarComponent.showCustomError(
-            context, "Login failed: Invalid response from internal server");
+            context, "Login Google failed, Invalid response");
       }
     } catch (e) {
       CustomSnackbarComponent.showCustomError(
-          context, "Login with Google failed: {$e");
+          context,
+          e.toString().contains('Exception')
+              ? "Login Google Cancelled"
+              : "Login Google failed, Internal server error");
     } finally {
       setState(() {
         _isLoading = false;
@@ -99,18 +102,18 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     if (!_formKey.currentState!.validate()) {
       if (_emailController.text.isEmpty) {
         CustomSnackbarComponent.showCustomError(
-            context, "Email tidak boleh kosong");
+            context, "Email cannot be empty");
       } else if (!_emailController.text.contains('@') ||
           !_emailController.text.contains('.')) {
-        CustomSnackbarComponent.showCustomError(
-            context, "Masukkan email yang valid");
+        CustomSnackbarComponent.showCustomError(context, "Enter a valid email");
       } else if (_passwordController.text.isEmpty) {
         CustomSnackbarComponent.showCustomError(
-            context, "Password tidak boleh kosong");
+            context, "Password cannot be empty");
       } else if (_passwordController.text.length < 5) {
         CustomSnackbarComponent.showCustomError(
-            context, "Password minimal 5 digit");
+            context, "Password must be at least 5 characters long");
       }
+
       return;
     }
 
@@ -142,10 +145,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         );
       } else {
         CustomSnackbarComponent.showCustomError(
-            context, "Login failed: Invalid response from server");
+            context, "Login failed, Invalid response from server");
       }
     } catch (e) {
-      CustomSnackbarComponent.showCustomError(context, "Login failed: $e");
+      CustomSnackbarComponent.showCustomError(
+          context, "Login failed, Email or password wrong!");
     } finally {
       setState(() {
         _isLoading = false;
