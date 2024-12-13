@@ -1,3 +1,5 @@
+import 'package:atma_cinema/clients/message_client.dart';
+import 'package:atma_cinema/components/custom_snackbar_component.dart';
 import 'package:flutter/material.dart';
 
 class SendMessageView extends StatelessWidget {
@@ -27,6 +29,42 @@ class SendMessageView extends StatelessWidget {
           );
         },
       );
+    }
+
+    void _submitMessage() async {
+      final messageClient = MessageClient();
+
+      if (questionController.text.isEmpty) {
+        return CustomSnackbarComponent.showCustomError(
+            context, "Title cannot be empty");
+      }
+
+      if (paymentIdController.text.isEmpty) {
+        return CustomSnackbarComponent.showCustomError(
+            context, "Payment ID cannot be empty");
+      }
+
+      if (messageController.text.isEmpty) {
+        return CustomSnackbarComponent.showCustomError(
+            context, "Message cannot be empty");
+      }
+
+      final Map<String, dynamic> formData = {
+        'title': questionController.text,
+        'paymentID': paymentIdController.text,
+        'description': messageController.text,
+      };
+
+      try {
+        await messageClient.createMessage(formData);
+        questionController.text = "";
+        paymentIdController.text = "";
+        messageController.text = "";
+        _showThankYouDialog();
+      } catch (e) {
+        CustomSnackbarComponent.showCustomError(
+            context, "Failed to send message");
+      }
     }
 
     return Scaffold(
@@ -120,12 +158,11 @@ class SendMessageView extends StatelessWidget {
                     backgroundColor: const Color(0xFF001F3F),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          10), // Makes the button rectangular
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   onPressed: () {
-                    _showThankYouDialog();
+                    _submitMessage();
                   },
                   child: const Text(
                     "Send Message",
