@@ -137,7 +137,7 @@ class SendMessageView extends StatelessWidget {
           ),
         ),
       ),
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
     );
   }
 }
