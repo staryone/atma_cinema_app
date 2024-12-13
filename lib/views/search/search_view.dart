@@ -64,6 +64,7 @@ class _SearchViewState extends ConsumerState<SearchView>
           });
 
           if (result.finalResult) {
+            _performSearch(_searchController.text);
             _stopListening();
           }
         },

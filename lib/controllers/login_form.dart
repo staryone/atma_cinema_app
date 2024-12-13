@@ -1,6 +1,8 @@
 import 'package:atma_cinema/clients/user_client.dart';
 import 'package:atma_cinema/components/custom_snackbar_component.dart';
 import 'package:atma_cinema/models/user_model.dart';
+import 'package:atma_cinema/providers/history_provider.dart';
+import 'package:atma_cinema/providers/ticket_provider.dart';
 import 'package:atma_cinema/providers/user_provider.dart';
 import 'package:atma_cinema/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +72,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             context, "Login with google successful");
 
         ref.invalidate(userFetchDataProvider);
+        ref.invalidate(ticketsFetchActiveProvider);
+        ref.invalidate(historysFetchActiveProvider);
 
         Navigator.pushReplacement(
           context,
@@ -127,6 +131,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         CustomSnackbarComponent.showCustomSuccess(context, "Login successful");
 
         ref.invalidate(userFetchDataProvider);
+        ref.invalidate(ticketsFetchActiveProvider);
+        ref.invalidate(historysFetchActiveProvider);
 
         Navigator.pushReplacement(
           context,
