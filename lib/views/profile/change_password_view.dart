@@ -95,11 +95,45 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   void _changePassword() async {
     setState(() {
       _isLoading = true;
+      _isOldPasswordValid = _oldPasswordController.text.isNotEmpty;
+      _isNewPasswordValid = _newPasswordController.text.isNotEmpty;
+      _isConfirmPasswordValid = _confirmPasswordController.text.isNotEmpty;
     });
+
+    if (!_isOldPasswordValid) {
+      _showError("Old password cannot be empty.");
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    if (!_isNewPasswordValid) {
+      _showError("New password cannot be empty.");
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    if (!_isConfirmPasswordValid) {
+      _showError("Confirm password cannot be empty.");
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
 
     final String oldPassword = _oldPasswordController.text;
     final String newPassword = _newPasswordController.text;
     final String confirmPassword = _confirmPasswordController.text;
+
+    // Validasi jika old password dan new password sama
+    if (oldPassword == newPassword) {
+      _showError("Old password and new password cannot be the same.");
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
 
     if (newPassword != confirmPassword) {
       _showError("New password and confirmation password do not match.");
@@ -139,28 +173,6 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
     );
   }
 
-  // void _showSuccessDialog() {
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: true,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text("Success"),
-  //         content: const Text("Your password has been changed."),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //               Navigator.of(context).pop(); // Close the Change Password screen
-  //             },
-  //             child: const Text("OK"),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
   void toggleOldPasswordVisibility() {
     setState(() {
       _isOldPasswordVisible = !_isOldPasswordVisible;
@@ -177,15 +189,6 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
     setState(() {
       _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
     });
-  }
-
-  void showCustomError(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
   }
 
   @override
@@ -219,7 +222,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                     validasi: (value) {
                       return _isOldPasswordValid
                           ? null
-                          : 'This field is required';
+                          : 'Old password cannot be empty';
                     },
                     controller: _oldPasswordController,
                     hintTxt: "**********",
@@ -238,7 +241,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                     validasi: (value) {
                       return _isNewPasswordValid
                           ? null
-                          : 'This field is required';
+                          : 'New password cannot be empty';
                     },
                     controller: _newPasswordController,
                     hintTxt: "**********",
@@ -257,7 +260,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                     validasi: (value) {
                       return _isConfirmPasswordValid
                           ? null
-                          : 'This field is required';
+                          : 'Confirm password cannot be empty';
                     },
                     controller: _confirmPasswordController,
                     hintTxt: "**********",

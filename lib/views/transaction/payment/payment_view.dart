@@ -164,7 +164,7 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Rp45.000",
+                          "Rp50.000",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
