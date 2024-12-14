@@ -10,8 +10,8 @@ import 'package:atma_cinema/providers/ticket_provider.dart';
 import 'package:atma_cinema/views/transaction/payment/success_payment_view.dart';
 import 'package:flutter/material.dart';
 import 'package:atma_cinema/utils/constants.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:atma_cinema/views/transaction/payment/expired_payment_view.dart';
 
 class PaymentView extends ConsumerStatefulWidget {
   final PaymentModel paymentData;
@@ -57,6 +57,14 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
         });
       } else {
         timer?.cancel();
+
+        // Navigasi ke halaman Expired Payment
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PaymentExpiredView(),
+          ),
+        );
       }
     });
   }
@@ -163,10 +171,13 @@ class _PaymentViewState extends ConsumerState<PaymentView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Rp50.000",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                        Text(
+                          "Rp${widget.paymentData.totalPayment}",
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Row(
